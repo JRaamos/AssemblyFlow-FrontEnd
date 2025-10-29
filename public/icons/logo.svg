@@ -1,0 +1,33 @@
+<svg width="256" height="64" viewBox="0 0 256 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AssemblyFlow - Wordmark</title>
+  <desc id="desc">AF monogram with AssemblyFlow text</desc>
+  <defs>
+    <linearGradient id="afGrad2" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1E3A8A"/>
+      <stop offset="1" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Monograma à esquerda -->
+  <g transform="translate(0,0)">
+    <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#afGrad2)" opacity="0.08"/>
+    <path d="M32 6 L50 50 H41.8 L37.9 40.4 H26.1 L22.2 50 H14 L32 6 Z M27.9 34.4 H36.1 L32 24.7 27.9 34.4 Z" fill="url(#afGrad2)"/>
+    <mask id="fCut2">
+      <rect width="64" height="64" fill="white"/>
+      <path d="M40 19 H26 V24 H40 V19 Z M36.5 27 H26 V32 H36.5 V27 Z" fill="black"/>
+    </mask>
+    <g mask="url(#fCut2)">
+      <path d="M32 6 L50 50 H41.8 L37.9 40.4 H26.1 L22.2 50 H14 L32 6 Z M27.9 34.4 H36.1 L32 24.7 27.9 34.4 Z" fill="url(#afGrad2)"/>
+    </g>
+  </g>
+
+  <!-- Wordmark: herda currentColor (bom para light/dark) -->
+  <g transform="translate(76,16)">
+    <style>
+      .brand { font: 700 20px 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; fill: currentColor; letter-spacing: .2px; }
+      .light { font: 500 12px 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; fill: currentColor; opacity:.72; }
+    </style>
+    <text class="brand" x="0" y="18">AssemblyFlow</text>
+    <text class="light" x="1" y="38">Program • Assignments • Print Views</text>
+  </g>
+</svg>

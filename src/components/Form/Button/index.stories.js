@@ -1,18 +1,18 @@
 
-import { Button } from './';
+import { Button } from '.';
 
-export default { 
-  title: 'Web/Components/Button',
-  component: Button, 
-}; 
+export default {
+   title: 'Web/Components/Button',
+   component: Button,
+};
 
-const Template = (args) => <Button {...args} />; 
+const Template = (args) => <Button {...args} />;
 
 export const Default = Template.bind({});
 
-Default.args = { 
+Default.args = {
    children: 'Default Text'
-}; 
+};
 
 export const DefaultOutline = Template.bind({});
 
@@ -24,9 +24,9 @@ DefaultOutline.args = {
 export const Primary = Template.bind({});
 
 Primary.args = {
-   color: 'primary', 
+   color: 'primary',
    children: 'Primary Text'
-}; 
+};
 
 export const PrimaryOutline = Template.bind({});
 
@@ -38,9 +38,9 @@ PrimaryOutline.args = {
 export const Secondary = Template.bind({});
 
 Secondary.args = {
-   color: 'secondary', 
+   color: 'secondary',
    children: 'Secondary Text'
-}; 
+};
 
 export const SecondaryOutline = Template.bind({});
 

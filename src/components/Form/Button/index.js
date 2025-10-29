@@ -5,12 +5,12 @@ import { ColorButton, Load } from "./styled";
 import { ThemedComponent } from "ui/theme";
 import { theme } from "ui/theme-color";
 
-export const Button = ({ children, loading, color = 'white', outline, link, nospace, centred, onClick }) => {
+export const Button = ({ children, loading, color = 'white', outline, link, nospace, centred, onClick, small, light, startIcon, endIcon, black, full }) => {
   const safeColor = theme.palette?.[color] ? color : "primary"
   return (
     <>
       <ThemedComponent>
-        <ColorButton variant={link ? "text" : outline ? "outlined" : "contained"} color={safeColor} nospace={nospace} centred={centred} onClick={onClick}>
+        <ColorButton variant={link ? "text" : outline ? "outlined" : "contained"} color={safeColor} nospace={nospace} centred={centred} black={black} onClick={onClick} small={small} light={light} startIcon={startIcon} endIcon={endIcon} full={full}>
           {
             loading ? <Load color={safeColor} outline={outline} /> : <>
               {children}

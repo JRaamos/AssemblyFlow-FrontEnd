@@ -4,19 +4,22 @@ import {
     DashboardAnimation,
     DashboardTitle,
     DashboardText,
-    DashboardContainer
+    DashboardContainer,
+    DashboardContent
 } from "./styled";
 
 import ContainerAuthenticated from "containers/Authenticated";
-import { Row, Col } from "reactstrap";
 import Button from "components/Form/Button";
 import useController from "./controller";
 import Core from "components/Form/Core";
+import { ButtonContainer, FormSpacer } from "ui/styled";
 
 export default function DashboardHome() {
 
     const {
-        formItems,
+        formItemsCo,
+        formItemsBr,
+        formItemsPio,
         formItemsCircuit
     } = useController()
 
@@ -29,16 +32,22 @@ export default function DashboardHome() {
                 </DashboardContainer>
                 <DashboardContainer>
                     <DashboardTitle>Assembleia de circuito (CA-co)</DashboardTitle>
-                    <Core formItems={formItems} />
+                    <Core formItems={formItemsCo} />
                 </DashboardContainer>
                 <DashboardContainer>
                     <DashboardTitle>Assembleia de circuito (CA-br)</DashboardTitle>
-                    <Core formItems={formItems} />
+                    <Core formItems={formItemsBr} />
                 </DashboardContainer>
                 <DashboardContainer>
                     <DashboardTitle>Reunião com pioneiros (CA-br)</DashboardTitle>
-                    <Core formItems={formItems} />
+                    <Core formItems={formItemsPio} />
                 </DashboardContainer>
+                <DashboardContent>
+                    <ButtonContainer end>
+                        <Button nospace color="primary">Salvar</Button>
+                    </ButtonContainer>
+                </DashboardContent>
+                <FormSpacer extraLarge />
             </ContainerAuthenticated>
         </>
     );
