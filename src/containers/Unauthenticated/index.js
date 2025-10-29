@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";  
+import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { Row, Col } from 'reactstrap';   
-import { ReadObject } from "services/storage"; 
+import { Row, Col } from 'reactstrap';
+import { ReadObject } from "services/storage";
 import { ThemedComponent } from "ui/theme";
 
 import {
@@ -15,12 +15,13 @@ import {
     Content,
     Touch
 } from './styled'
- 
+import { Icon } from "ui/styled";
 
-export default function ContainerUnauthenticated({ children, keep }){   
-    
+
+export default function ContainerUnauthenticated({ children, keep, image }) {
+
     const n = useNavigate();
-    const navigate = to => n(`/${ to }`); 
+    const navigate = to => n(`/${to}`);
 
     const init = () => {
         const authentication = ReadObject('authentication')
@@ -28,36 +29,33 @@ export default function ContainerUnauthenticated({ children, keep }){
             completeNext()
         }
     }
- 
+
     const completeNext = () => {
         navigate('dashboard')
     }
 
-    useEffect(() => {  
+    useEffect(() => {
         init()
-        window.scrollTo(0,0)
+        window.scrollTo(0, 0)
     }, [])
 
-    return ( 
-        <> 
+    return (
+        <>
             <ThemedComponent>
                 <Content>
                     <Row>
-                        <Col md={{ size:7 }}>
+                        <Col md={{ size: 7 }} className="nopadding">
                             <SideBackgroundImageContainer>
-                                <SideBackgroundImage />
-                                <SideBackgroundImageDegree />
+                                {!image ? null : <SideBackgroundImage />}
+                                {image ? null : <Icon icon="logo" />}
                             </SideBackgroundImageContainer>
                         </Col>
-                        <Col md={{ size:5 }}>
+                        <Col md={{ size: 5 }} className="nopadding">
                             <FormContent>
-                                <Touch onClick={() => navigate('')}>
-                                    <AppLogo /> 
-                                </Touch>
-                                { children }
+                                {children}
                             </FormContent>
                         </Col>
-                    </Row>  
+                    </Row>
                 </Content>
             </ThemedComponent>
         </>

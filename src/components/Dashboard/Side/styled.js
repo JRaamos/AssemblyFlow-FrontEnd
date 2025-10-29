@@ -1,118 +1,123 @@
-import styled from 'styled-components'   
-  
+import styled from 'styled-components'
+import { Icon } from 'ui/styled';
 
-export const DashboardMenuContainer = styled.div.attrs({ 
+
+export const DashboardMenuContainer = styled.div.attrs({
 })`           
     position: fixed;
     top:0;
     bottom: 0;
-    right: 0;
     left: 0;
     z-index: 100;
-    background: ${ props => props.theme.palette.colors.shadow };
+    background: ${props => props.theme.palette.colors.shadow};
 `;
 
-export const DashboardMenu = styled.div.attrs({ 
-    className:'menu-contant'
+export const DashboardMenu = styled.div.attrs({
+    className: 'menu-contant'
 })`           
-    max-width: 389px;
-    background: ${ props => props.theme.palette.colors.white };
-    width: 100%;
+    width: ${p => p.less ? '60px' : '224px'};
+    padding: ${p => p.less ? '8px' : '16px'};
+    background: ${props => props.theme.palette.colors.white};
     min-height: 100vh;
     max-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: auto;
+    /* Scrollbar styling */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: ${props => props.theme.palette.colors.white};
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${props => props.theme.palette.colors.shadow};
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: ${props => props.theme.palette.primary.main};
+    }
 `;
 
-export const DashboardMenuHeader = styled.div.attrs({ 
+export const DashboardMenuHeader = styled.div.attrs({
 })`           
-    height: 60px;
-    width: 100%; 
+    width: 100%;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    margin: 8px 0px 20px 0px;
+    align-items: center;
+    ${p => p.less ? `
+            flex-direction: column;
+        ` : ``};
+`;
+
+export const LogoIcon = styled(Icon).attrs({
+})`   
+    width: 190px;
+`;
+
+
+export const DashboardMenuOption = styled.div.attrs({
+})`           
+    padding: 11px 8px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
-
-    text-transform: uppercase;
-    font-size: 15px;
-    color: ${ props => props.theme.palette.colors.white };
-    cursor: pointer;
-
-    background: ${ props => props.theme.palette.primary.main };
-    background: linear-gradient(48deg, rgba(${props => props.theme.palette.primary.main},1) 0%, rgba(${props => props.theme.palette.primary.main},.9) 21%, rgba(${props => props.theme.palette.primary.main},.75) 49%, rgba(${props => props.theme.palette.primary.main},.6) 87%, rgba(${props => props.theme.palette.primary.main},.45) 100%);
-`;
-
-export const DashboardMenuHeaderIcon = styled.img.attrs({ 
-})`           
-    margin-right: 20px;
-    cursor: pointer;
-`;
-
-export const DashboardMenuHeaderUserContent = styled.div.attrs({ 
-})`           
-    padding: 27px 25px;
-    margin-bottom: 28px;
-    background: ${ props => props.theme.palette.primary.main } ;
-`;
-
-export const DashboardMenuHeaderUserImage = styled.div.attrs({ 
-})`           
-    width: 160px;
-    height: 160px; 
-    border-radius: 80px; 
-    background: ${ props => props.theme.palette.colors.grey } url(/logo1024.png) no-repeat center center / cover;
-    margin: 0 auto 12px;
-    overflow: hidden;
-`;
-
-export const DashboardMenuHeaderUserText = styled.div.attrs({ 
-})`           
-    font-size: 15px;
-    font-weight: bold;
-    color: ${ props => props.theme.palette.colors.grey };
-    margin-bottom: 12px; 
-`;
-
-export const DashboardMenuOption = styled.div.attrs({ 
-})`           
-    padding: 20px 30px;
-    font-size: 15px;
-    color: ${ props => props.theme.palette.colors.grey };
+    gap: 8px;
     cursor: pointer; 
-
-    &:hover{
-        text-decoration: underline;
-    }
+    width: 100%;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
     
-    ${
-        props => props.active ? `
-            background: ${ props.theme.palette.primary.main };
-            font-size: 15px;
-            font-weight: bold;
-            color: ${ props.theme.palette.colors.white };
-        ` : ``
+    ${props => props.active ? `
+            background: ${props.theme.palette.background.primary};
+                    ` : ``
     }
 `;
+export const DashboardMenuBorder = styled.div.attrs({
+})`           
+    border-top: .5px solid ${p => p.theme.palette.colors.shadow};
+`;
 
-export const DashboardMenuContent = styled.div.attrs({ 
+
+export const OptionText = styled.div.attrs({
+})` 
+    font-family: Montserrat;
+    font-weight: 500;
+    font-size: 15px;
+    color: ${p => p.theme.palette.colors.black};
+    cursor: pointer;
+`;
+
+export const DashboardMenuContent = styled.div.attrs({
 })` 
     flex:1;
+    margin-top: 20px;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
 `;
 
-export const DashboardMenuFooter = styled.div.attrs({ 
+export const DashboardMenuFooter = styled.div.attrs({
 })`
-    padding: 20px;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
 `;
 
-export const DashboardVersionContent = styled.div.attrs({ 
+export const DashboardVersionContent = styled.div.attrs({
 })` 
     margin: 24px 0;
 `;
 
-export const DashboardVersionText = styled.div.attrs({ 
+export const DashboardVersionText = styled.div.attrs({
 })`
     font-size: 15px;
     font-weight: bold;
-    color: ${ props => props.theme.palette.colors.grey };
+    color: ${props => props.theme.palette.colors.grey};
     text-align: center; 
 `;

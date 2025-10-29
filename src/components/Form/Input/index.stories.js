@@ -1,21 +1,20 @@
 
-import Input from './';
+import Input from '.';
 
-export default { 
+export default {
   title: 'Web/Components/Input',
-  component: Input, 
-}; 
+  component: Input,
+};
 
-const Template = (args) => <Input {...args} />; 
+const Template = (args) => <Input {...args} />;
 
-export const Default = Template.bind({}); 
+export const Default = Template.bind({});
 
-Default.args = { 
-    type: 'text',
-    label: 'Default Label',
-    placeholder: 'Default Label',
-    value: '',
-    secondary: false,
-    onChange: e => null
-}; 
- 
+Default.args = {
+  type: 'text',
+  label: 'Default Label',
+  placeholder: 'Default Label',
+  value: '',
+  secondary: false,
+  onChange: e => null
+};
