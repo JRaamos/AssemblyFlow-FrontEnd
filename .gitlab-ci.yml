@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: node:lts-alpine
+  script:
+    - echo "Copying build artifact to deployment directory..."
+    - apk add --no-cache openssh-client
+    - echo "$SSH_PRIVATE_KEY" > /tmp/server.pem  
+    - chmod 400 /tmp/server.pem
+    - scp -o StrictHostKeyChecking=no -i /tmp/server.pem -r dist/ ubuntu@$EC2_IP:/tmp/
+    - echo "Deploying to EC2..."
+    - ssh -o StrictHostKeyChecking=no -i /tmp/server.pem ubuntu@$EC2_IP "sudo rm -rf /var/www/html/dist && sudo mv /tmp/dist /var/www/html && sudo chmod -R 755 /var/www/html/dist"
+  only:
+    - main
