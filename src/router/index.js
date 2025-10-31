@@ -17,6 +17,7 @@ import CreatePassword from 'screens/Authentication/CreatePassword'
 import DashboardHome from 'screens/Home'
 import DashboardMe from 'screens/Dashboard/Me'
 import GeneralLetter from "screens/GeneralLetter";
+import Pioneers from "screens/Pioneers";
 
 export default function AppRouter() {
   return (
@@ -33,6 +34,7 @@ export default function AppRouter() {
           <Route path="/dashboard" exact element={<DashboardHome />} />
 
           <Route path="/cg" exact element={<GeneralLetter />} />
+          <Route path="/pio" exact element={<Pioneers />} />
 
           <Route path="/dashboard/Me" exact element={<DashboardMe />} />
 

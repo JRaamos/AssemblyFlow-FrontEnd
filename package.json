@@ -37,6 +37,7 @@
         "prop-types": "^15.8.1",
         "quill": "2.0.2",
         "react": "^19.1.0",
+        "react-beautiful-dnd": "^13.1.1",
         "react-currency-format": "^1.1.0",
         "react-dom": "^19.1.0",
         "react-dropzone": "^14.3.8",
