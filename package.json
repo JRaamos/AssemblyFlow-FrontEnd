@@ -29,7 +29,6 @@
         "babel-runtime": "^6.26.0",
         "bootstrap": "^5.3.7",
         "crypto-js": "^4.2.0",
-        "electron": "^37.2.0",
         "html-to-image": "^1.11.13",
         "i18n-js": "^4.5.1",
         "jspdf": "^3.0.1",
@@ -72,6 +71,7 @@
         "babel-loader": "^10.0.0",
         "cypress": "^14.5.1",
         "cypress-rspack-dev-server": "^1.1.0",
+        "electron": "^37.7.1",
         "path": "^0.12.7",
         "webpack": "^5.99.9",
         "webpack-cli": "^6.0.1"

@@ -10,6 +10,9 @@ const EditorContainer = styled.div`
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  max-height: 600px;
 
   .ql-toolbar {
     background: #f9fafb;
@@ -17,6 +20,9 @@ const EditorContainer = styled.div`
     border-bottom: 1px solid #e5e7eb;
     border-radius: 12px 12px 0 0;
     padding: 8px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .ql-container {
@@ -25,7 +31,8 @@ const EditorContainer = styled.div`
     font-size: 15px;
     line-height: 1.6;
     color: #111827;
-    min-height: 220px;
+    flex: 1;
+    overflow-y: auto;
     padding: 16px;
   }
 
@@ -78,7 +85,7 @@ export default function LetterEditor({
     'align',
     'link',
     'blockquote',
-    'code-block'
+    'code-block',
   ]
 
   const { quill, quillRef } = useQuill({

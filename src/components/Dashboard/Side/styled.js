@@ -74,7 +74,7 @@ export const DashboardMenuOption = styled.div.attrs({
     cursor: pointer;
     
     ${props => props.active ? `
-            background: ${props.theme.palette.background.primary};
+            background: ${props.theme.palette.lightBlue.main};
                     ` : ``
     }
 `;
@@ -89,7 +89,7 @@ export const OptionText = styled.div.attrs({
     font-family: Montserrat;
     font-weight: 500;
     font-size: 15px;
-    color: ${p => p.theme.palette.colors.black};
+    color: ${p => p.active ? p.theme.palette.colors.white : p.theme.palette.colors.black};
     cursor: pointer;
 `;
 

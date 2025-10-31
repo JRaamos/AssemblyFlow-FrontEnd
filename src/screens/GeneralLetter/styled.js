@@ -6,8 +6,9 @@ import {
 
 export const DashboardTitle = styled.div.attrs({
 })`            
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
+    font-family: Kumbh Sans;
     color: ${props => props.theme.palette.colors.black};
     margin-bottom: 12px;
     ${props => props.centred ? `
@@ -18,6 +19,7 @@ export const DashboardTitle = styled.div.attrs({
 
 export const DashboardText = styled.div.attrs({
 })`            
+    font-family: Kumbh Sans;
     font-size: 16px;
     line-height: 26px;
     color: ${props => props.theme.palette.colors.black};
@@ -35,7 +37,7 @@ export const DashboardAnimation = styled(Animation).attrs({
 
 export const DashboardContainer = styled.div.attrs({
 })`            
-    padding: 16px 16px 0px 16px;
+    padding: 16px 24px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
     background: ${props => props.theme.palette.colors.white};
     border-radius: 8px;
