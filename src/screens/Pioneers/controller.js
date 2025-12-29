@@ -75,7 +75,7 @@ export default function useController() {
                 if (parsed && parsed.meta && parsed.rows) setProgram(recalcTimes(parsed));
                 else setProgram(recalcTimes(defaultProgram));
             } catch {
-                setProgram(recalcTimes(defaultProgram)); // <<<<<< CORRIGIDO
+                setProgram(recalcTimes(defaultProgram));
             }
         } else {
             setProgram(recalcTimes(defaultProgram));

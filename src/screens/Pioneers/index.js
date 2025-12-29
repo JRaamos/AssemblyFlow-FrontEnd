@@ -221,8 +221,8 @@ export default function Pioneers() {
                     Salvar
                 </Button>
             </ButtonContainer>
-
             <FormSpacer />
+
             <ProgramWrap>
                 <ProgramTable id="program-table">
                     <thead>
@@ -352,6 +352,7 @@ export default function Pioneers() {
                     </tbody>
                 </ProgramTable>
             </ProgramWrap>
+            <FormSpacer />
         </ContainerAuthenticated>
     );
 }
