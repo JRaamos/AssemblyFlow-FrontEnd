@@ -234,6 +234,7 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
   },
   "ass-co": {
     meta: {
+      circuitMode: "parts",
       sections: {
         partA: { terminationControl: 0 },
         partB: { terminationControl: 0 },
@@ -291,6 +292,7 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
   },
   "ass-br": {
     meta: {
+      circuitMode: "single",
       sections: {
         partA: { terminationControl: 17 },
         partB: { terminationControl: 17 },

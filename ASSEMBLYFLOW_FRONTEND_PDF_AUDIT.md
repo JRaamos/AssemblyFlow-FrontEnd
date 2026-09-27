@@ -63,6 +63,7 @@ O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferênc
 
 - Navegação por igualdade exata de rota, eliminando a seleção ambígua entre `T-T` e `T-T-br`.
 - Área de edição separada da prévia A4 e ações explícitas de restaurar e baixar PDF.
+- Seletor de estrutura do circuito com os modos `Único` e `Partes A e B`; `Ass-br` inicia como circuito único, enquanto a Parte B permanece preservada e reaparece apenas ao escolher o modo dividido.
 - Layout desktop responsivo e sem largura mínima fixa.
 - Editor rico com barra reduzida, saneamento por lista permitida e limpeza de listeners.
 - Identidade AssemblyFlow aplicada a título, manifesto, favicons e ícones de 16 a 1024 px, incluindo `.ico` preparado para uso futuro no Windows.
@@ -73,6 +74,7 @@ O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferênc
 
 - Geração com `jsPDF`; cartas e designações usam A4 retrato com margens estáveis, quebra de páginas e rodapé com paginação.
 - Os programas `Ass-co` e `Ass-br` usam A4 paisagem e tabela vetorial própria, reproduzindo a grade operacional da planilha: faixas bege, manhã/tarde, designado, congregação, controles de tempo e quadro de ensaio.
+- No modo único, o PDF remove qualquer indicação de Parte A/B e usa o rodapé `ENSAIO DO PROGRAMA DA ASSEMBLEIA`.
 - Elementos de interface, toolbars e controles são excluídos; valores de inputs viram texto de impressão.
 - Texto permanece selecionável e extraível.
 - Nomes de arquivo são previsíveis e sanitizados para Windows.

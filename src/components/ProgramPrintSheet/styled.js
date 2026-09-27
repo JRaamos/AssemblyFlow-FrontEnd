@@ -77,6 +77,14 @@ export const ProgramPrintTable = styled.table`
     text-decoration: underline;
   }
 
+  .part-row th.single-program {
+    text-align: center;
+  }
+
+  .part-row .single-program em {
+    position: static;
+  }
+
   .column-row th,
   .session-header th {
     height: 24px;

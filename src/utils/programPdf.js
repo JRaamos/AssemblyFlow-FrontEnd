@@ -97,6 +97,7 @@ export const createAssemblyProgramPdf = ({
   partLabel = "PARTE A",
   variantLabel = "CA-BR",
   footerVariantLabel = variantLabel,
+  singleProgram = false,
   rehearsalDateTime = "",
   rehearsalVenue = "",
 }) => {
@@ -127,9 +128,10 @@ export const createAssemblyProgramPdf = ({
   drawCell(pdf, { x: left, y, width: firstGroupWidth, height: 8, text: partLabel, bold: true, fill: HEADER_FILL, fontSize: 11.5 });
   pdf.setFont("helvetica", "bolditalic");
   pdf.setFontSize(11.5);
-  pdf.text(variantLabel, left + 68, y + 5.4, { align: "center" });
+  const variantCenter = singleProgram ? left + firstGroupWidth / 2 : left + 68;
+  pdf.text(variantLabel, variantCenter, y + 5.4, { align: "center" });
   pdf.setLineWidth(0.25);
-  pdf.line(left + 56, y + 6.1, left + 80, y + 6.1);
+  pdf.line(variantCenter - 12, y + 6.1, variantCenter + 12, y + 6.1);
   drawCell(pdf, { x: left + firstGroupWidth, y, width: controlWidth, height: 8, text: "CONTR. TEMPO", align: "center", bold: true, fill: HEADER_FILL, fontSize: 7.1 });
   drawCell(pdf, { x: left + firstGroupWidth + controlWidth, y, width: columns[9], height: 8, text: "Clas", align: "center", bold: true, fill: HEADER_FILL, fontSize: 7.1 });
   y += 8;
@@ -215,7 +217,12 @@ export const createAssemblyProgramPdf = ({
     footerY + 6.5,
     13,
     [
-      { text: "ENSAIO DE TODAS AS PARTES DA ASSEMBLEIA", fontSize: 7.8 },
+      {
+        text: singleProgram
+          ? "ENSAIO DO PROGRAMA DA ASSEMBLEIA"
+          : "ENSAIO DE TODAS AS PARTES DA ASSEMBLEIA",
+        fontSize: 7.8,
+      },
       { text: rehearsalDateTime, align: "center", fontSize: 8.2 },
       { text: rehearsalVenue, fontSize: 7.8 },
     ],
@@ -223,7 +230,7 @@ export const createAssemblyProgramPdf = ({
   );
 
   pdf.setProperties({
-    title: `${variantLabel} - ${partLabel}`,
+    title: [variantLabel, partLabel].filter(Boolean).join(" - "),
     subject: "Programa espiritual da Assembleia de Circuito",
     author: "AssemblyFlow",
     creator: "AssemblyFlow",

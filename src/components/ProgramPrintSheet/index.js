@@ -52,6 +52,7 @@ export default function ProgramPrintSheet({
   partLabel,
   variantLabel,
   footerVariantLabel,
+  singleProgram = false,
   rehearsalDateTime,
   rehearsalVenue,
 }) {
@@ -79,8 +80,8 @@ export default function ProgramPrintSheet({
               <th colSpan="10">PROGRAMA ESPIRITUAL DA ASSEMBLEIA DE CIRCUITO</th>
             </tr>
             <tr className="part-row">
-              <th colSpan="6">
-                <span>{partLabel}</span>
+              <th colSpan="6" className={singleProgram ? "single-program" : ""}>
+                {partLabel ? <span>{partLabel}</span> : null}
                 <em>{variantLabel}</em>
               </th>
               <th colSpan="3">CONTR. TEMPO</th>
@@ -128,7 +129,11 @@ export default function ProgramPrintSheet({
           </thead>
           <tbody>
             <tr>
-              <td>ENSAIO DE TODAS AS PARTES DA ASSEMBLEIA</td>
+              <td>
+                {singleProgram
+                  ? "ENSAIO DO PROGRAMA DA ASSEMBLEIA"
+                  : "ENSAIO DE TODAS AS PARTES DA ASSEMBLEIA"}
+              </td>
               <td>{rehearsalDateTime}</td>
               <td>{rehearsalVenue}</td>
             </tr>

@@ -38,6 +38,9 @@ export default function AssemblyProgram({ documentId }) {
   const { project, setProject, resetSection } = useAssemblyProject();
   const registry = DOCUMENT_REGISTRY_BY_ID[documentId];
   const [activePart, setActivePart] = useState("partA");
+  const [circuitMode, setCircuitModeState] = useState(
+    () => project.documents[documentId]?.meta?.circuitMode || "parts"
+  );
   const [activeRow, setActiveRow] = useState(null);
   const [exportStatus, setExportStatus] = useState("");
   const rowRefs = useRef([]);
@@ -47,24 +50,29 @@ export default function AssemblyProgram({ documentId }) {
 
   const assemblyDocument = project.documents[documentId];
   const isAssemblyProgram = documentId === "ass-co" || documentId === "ass-br";
+  const activeSection = circuitMode === "single" ? "partA" : activePart;
   const eventScope = registry.variant === "br"
     ? project.events.br
     : registry.variant === "co"
       ? project.events.co
       : project.events.pioneers;
-  const currentEvent = eventScope?.[activePart] || {};
-  const partLabel = activePart === "partA" ? "PARTE A" : "PARTE B";
+  const currentEvent = eventScope?.[activeSection] || {};
+  const partLabel = circuitMode === "single"
+    ? ""
+    : activeSection === "partA"
+      ? "PARTE A"
+      : "PARTE B";
   const variantLabel = registry.variant === "br" ? "CA-BR" : "CA-CO";
   const footerVariantLabel = registry.variant === "br" ? "CA-br" : "CA-co";
 
   const program = useMemo(() => {
     const section = {
-      meta: assemblyDocument.meta.sections[activePart],
-      rows: assemblyDocument.records[activePart],
+      meta: assemblyDocument.meta.sections[activeSection],
+      rows: assemblyDocument.records[activeSection],
     };
 
     return recalculateProgram(section);
-  }, [activePart, assemblyDocument]);
+  }, [activeSection, assemblyDocument]);
 
   const persistSection = (nextSection) => {
     const recalculated = recalculateProgram(nextSection);
@@ -79,17 +87,42 @@ export default function AssemblyProgram({ documentId }) {
             ...current.documents[documentId].meta,
             sections: {
               ...current.documents[documentId].meta.sections,
-              [activePart]: recalculated.meta,
+              [activeSection]: recalculated.meta,
             },
           },
           records: {
             ...current.documents[documentId].records,
-            [activePart]: recalculated.rows,
+            [activeSection]: recalculated.rows,
           },
         },
       },
     }));
   };
+
+  const setCircuitMode = (mode) => {
+    if (mode === "single") setActivePart("partA");
+    setCircuitModeState(mode);
+    setActiveRow(null);
+    setExportStatus("");
+    setProject((current) => ({
+      ...current,
+      documents: {
+        ...current.documents,
+        [documentId]: {
+          ...current.documents[documentId],
+          meta: {
+            ...current.documents[documentId].meta,
+            circuitMode: mode,
+          },
+        },
+      },
+    }));
+  };
+
+  useEffect(() => {
+    setCircuitModeState(project.documents[documentId]?.meta?.circuitMode || "parts");
+    setActivePart("partA");
+  }, [documentId]);
 
   const setMeta = (key, value) => {
     persistSection({
@@ -234,7 +267,8 @@ export default function AssemblyProgram({ documentId }) {
 
   const handleReset = () => {
     if (!window.confirm(`Restaurar os textos oficiais de ${registry.menuLabel}? As edições deste documento serão substituídas.`)) return;
-    resetSection(documentId);
+    const restored = resetSection(documentId);
+    setCircuitModeState(restored.documents[documentId]?.meta?.circuitMode || "parts");
     setExportStatus("Textos oficiais restaurados.");
   };
 
@@ -243,7 +277,11 @@ export default function AssemblyProgram({ documentId }) {
     const fileName = buildDocumentFileName({
       documentId,
       date: program.meta.date,
-      part: registry.supportsParts ? (activePart === "partA" ? "parte-a" : "parte-b") : "",
+      part: registry.supportsParts
+        ? circuitMode === "parts"
+          ? (activeSection === "partA" ? "parte-a" : "parte-b")
+          : "unico"
+        : "",
     });
     const success = isAssemblyProgram
       ? await downloadAssemblyProgramPdf(
@@ -252,6 +290,7 @@ export default function AssemblyProgram({ documentId }) {
             partLabel,
             variantLabel,
             footerVariantLabel,
+            singleProgram: circuitMode === "single",
             rehearsalDateTime: currentEvent.rehearsalDateTime,
             rehearsalVenue: currentEvent.rehearsalVenue,
           },
@@ -265,10 +304,36 @@ export default function AssemblyProgram({ documentId }) {
     <ContainerAuthenticated keep>
       <ScreenTitle>{assemblyDocument.meta.title}</ScreenTitle>
       <ScreenCard>
-        <ScreenText>Programa editável com persistência local, suporte à Parte A/B e exportação em PDF.</ScreenText>
+        <ScreenText>
+          {circuitMode === "single"
+            ? "Programa de circuito único, editável e pronto para exportação em PDF."
+            : "Programa editável com Partes A/B e exportação em PDF."}
+        </ScreenText>
       </ScreenCard>
 
-      {registry.supportsParts ? (
+      {isAssemblyProgram && registry.supportsParts ? (
+        <>
+          <SmallLabel>Tipo de circuito</SmallLabel>
+          <SectionTabs>
+            <SectionTab type="button" active={circuitMode === "single"} onClick={() => setCircuitMode("single")}>
+              Único
+            </SectionTab>
+            <SectionTab type="button" active={circuitMode === "parts"} onClick={() => setCircuitMode("parts")}>
+              Partes A e B
+            </SectionTab>
+          </SectionTabs>
+          {circuitMode === "parts" ? (
+            <SectionTabs aria-label="Parte do circuito">
+              <SectionTab type="button" active={activePart === "partA"} onClick={() => setActivePart("partA")}>
+                Parte A
+              </SectionTab>
+              <SectionTab type="button" active={activePart === "partB"} onClick={() => setActivePart("partB")}>
+                Parte B
+              </SectionTab>
+            </SectionTabs>
+          ) : null}
+        </>
+      ) : registry.supportsParts ? (
         <SectionTabs>
           <SectionTab type="button" active={activePart === "partA"} onClick={() => setActivePart("partA")}>
             Parte A
@@ -340,6 +405,7 @@ export default function AssemblyProgram({ documentId }) {
             partLabel={partLabel}
             variantLabel={variantLabel}
             footerVariantLabel={footerVariantLabel}
+            singleProgram={circuitMode === "single"}
             rehearsalDateTime={currentEvent.rehearsalDateTime}
             rehearsalVenue={currentEvent.rehearsalVenue}
           />

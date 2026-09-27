@@ -107,6 +107,8 @@ it("loads the current Ass-br workbook program and rehearsal details", () => {
     congregation: "Valente",
   });
   expect(program.rows.at(-1)).to.include({ time: "15:45", end: "15:55" });
+  expect(project.documents["ass-br"].meta.circuitMode).to.equal("single");
+  expect(project.documents["ass-co"].meta.circuitMode).to.equal("parts");
   expect(project.events.br.partA).to.include({
     date: "06 de dezembro de 2026",
     rehearsalDateTime: "09 de novembro 2026, às 19:30",
@@ -176,7 +178,7 @@ it("creates a real A4 PDF with selectable text", () => {
   expect(pdf.getNumberOfPages()).to.equal(1);
 });
 
-it("creates the Ass-br program as a selectable landscape A4 PDF", () => {
+it("creates the Ass-br single-circuit program as a selectable landscape A4 PDF", () => {
   const project = cloneAssemblyProject(defaultAssemblyProject);
   const program = recalculateProgram({
     meta: project.documents["ass-br"].meta.sections.partA,
@@ -185,16 +187,17 @@ it("creates the Ass-br program as a selectable landscape A4 PDF", () => {
   const event = project.events.br.partA;
   const pdf = createAssemblyProgramPdf({
     program,
-    partLabel: "PARTE A",
+    partLabel: "",
     variantLabel: "CA-BR",
     footerVariantLabel: "CA-br",
+    singleProgram: true,
     rehearsalDateTime: event.rehearsalDateTime,
     rehearsalVenue: event.rehearsalVenue,
   });
   const base64 = pdf.output("datauristring").split(",")[1];
 
   cy.writeFile(
-    "output/pdf/assemblyflow-programa-ass-br-parte-a.pdf",
+    "output/pdf/assemblyflow-programa-ass-br-unico.pdf",
     base64,
     "base64"
   );
@@ -202,4 +205,7 @@ it("creates the Ass-br program as a selectable landscape A4 PDF", () => {
   expect(pdf.internal.pageSize.getWidth()).to.be.closeTo(297, 0.1);
   expect(pdf.internal.pageSize.getHeight()).to.be.closeTo(210, 0.1);
   expect(pdf.getNumberOfPages()).to.equal(1);
+  const pageCommands = pdf.internal.pages.flat().join(" ");
+  expect(pageCommands).not.to.contain("PARTE A");
+  expect(pageCommands).to.contain("ENSAIO DO PROGRAMA DA ASSEMBLEIA");
 });
