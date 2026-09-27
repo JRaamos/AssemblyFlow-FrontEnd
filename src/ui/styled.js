@@ -84,7 +84,7 @@ export const DecoratedScroll = styled.div.attrs({
 
 
 export const Icon = styled.img.attrs((props) => ({
-    src: `/icons/${props.icon}.svg`,
+    src: `./icons/${props.icon}.svg`,
 }))` 
     margin: ${props => props.nomargin ? `0` : `0 2px`} ;
     z-index: 1;

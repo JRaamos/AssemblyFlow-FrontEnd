@@ -6,6 +6,12 @@
 # Dist
 node_modules
 dist/
+release/
+*.exe
+*.blockmap
+.electron-builder-cache/
+cypress/downloads/
+tmp/
 
 # Profile
 .rspack-profile-*/

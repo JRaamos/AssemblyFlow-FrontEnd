@@ -101,7 +101,7 @@ export const HeaderMobile = styled.div.attrs({
 
 
 export const MenuIcon = styled.img.attrs({ 
-    src:'/icons/menu.svg'
+    src:'./icons/menu.svg'
 })`           
 `;
 
@@ -163,4 +163,4 @@ export const HeaderMobileItem = styled.li.attrs({
 //         text-decoration: underline; 
 //         cursor: pointer;
 //     }
-// `;   
+// `;

@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-import { sanitizeWindowsFileName } from "./downloads";
+import { savePdf } from "./downloads";
 
 const HEADER_FILL = [222, 220, 200];
 const BLACK = [12, 12, 12];
@@ -242,8 +242,7 @@ export const createAssemblyProgramPdf = ({
 export const downloadAssemblyProgramPdf = async (options, fileName) => {
   try {
     const pdf = createAssemblyProgramPdf(options);
-    pdf.save(`${sanitizeWindowsFileName(fileName)}.pdf`);
-    return true;
+    return await savePdf(pdf, fileName);
   } catch (error) {
     console.error("downloadAssemblyProgramPdf", error);
     return false;

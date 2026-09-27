@@ -11,14 +11,14 @@ export const MoreRow = styled.div.attrs({
     padding: 20px 0 ;
     background: ${ props => props.theme.palette.primary.main };
 `;
- 
+
 export const MoreTitle = styled.div.attrs({ 
 })`          
     font-size: 32px;
     font-weight: bold;
     color: ${ props => props.theme.palette.colors.white };
 `;
- 
+
 export const MoreLine = styled.div.attrs({ 
 })`          
     margin: 10px 0 20px;
@@ -27,13 +27,13 @@ export const MoreLine = styled.div.attrs({
     background: ${ props => props.theme.palette.colors.white };
     margin-right: 150px;
 `;
- 
+
 export const MoreText = styled.div.attrs({ 
 })` 
     font-size: 16px; 
     color: ${ props => props.theme.palette.colors.white };
 `;
- 
+
 export const MoreLogoCircle = styled.div.attrs({ 
 })` 
     max-width: 398px;
@@ -58,7 +58,7 @@ export const MoreLogo = styled.img.attrs({
 `;
  
 export const MoreDecoration = styled.img.attrs({ 
-    src:'/icons/circle-2.svg'
+    src:'./icons/circle-2.svg'
 })` 
     width: 793px;
     position: absolute;
@@ -66,4 +66,3 @@ export const MoreDecoration = styled.img.attrs({
     right: -320px;
     z-index: -1;
 `;
- 

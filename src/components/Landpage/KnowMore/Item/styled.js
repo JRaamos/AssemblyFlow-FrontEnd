@@ -8,7 +8,7 @@ export const KnowItem = styled.div.attrs({
     margin-top: 30px;
     border-radius: 5px;
     box-shadow: 0px 2px 6px ${ props => props.theme.palette.colors.shadow };
-`; 
+`;
  
 export const KnowItemImage = styled.div.attrs({ 
 })`   
@@ -18,19 +18,19 @@ export const KnowItemImage = styled.div.attrs({
     border-bottom-right-radius: 43px; 
     overflow: hidden;        
     ${ props => props.image ? `background: ${ props.theme.palette.colors.lightshadow } url(${ props.image }) center center / cover;` : `` }
-`; 
+`;
  
 export const KnowItemContent = styled.div.attrs({ 
 })`   
     padding: 20px 30px 10px;
-`; 
+`;
  
 export const KnowItemContentTitle = styled.div.attrs({ 
 })`   
     color: ${ props => props.theme.palette.secondary.main };
     font-size: 24px;
     font-weight: 600;   
-`; 
+`;
 export const KnowItemContentText = styled.div.attrs({ 
 })`   
     color: ${ props => props.theme.palette.colors.grey };
@@ -48,7 +48,7 @@ export const KnowItemContentRateText = styled.div.attrs({
     font-size: 13px; 
 `; 
 export const KnowItemContentRateIcon = styled.img.attrs(props => ({ 
-    src: `/icons/star-${ props.rated ? `on` : `off` }.svg`
+    src: `./icons/star-${ props.rated ? `on` : `off` }.svg`
 }))`   
 margin-right: 8px ;
 `; 
@@ -63,4 +63,4 @@ export const KnowItemContentAvailable = styled.div.attrs({
     margin-top: 40px;
     color: ${ props => props.theme.palette.secondary.main };
     font-size: 14px;
-`; 
+`;

@@ -118,7 +118,7 @@ export const AutofillButton = styled.div.attrs({
 `;
 
 export const AutofillButtonIcon = styled.img.attrs({
-    src: '/icons/circle.svg'
+    src: './icons/circle.svg'
 })`
     width: 18px;
     margin: 0 18px;

@@ -10,7 +10,7 @@ export const CommomContainer = styled.div.attrs({
 `;
 
 export const CommomDecoration = styled.img.attrs({ 
-    src:'/icons/circle-2.svg'
+    src:'./icons/circle-2.svg'
 })`          
     position: absolute;
     width: 793px;
@@ -24,7 +24,7 @@ export const CommomTitle = styled.h1.attrs({
     font-weight: bold;
     color: ${ props => props.theme.palette.secondary.main };
     margin: 0;
-`;  
+`;
 
 export const CommomList = styled.ul.attrs({  
 })`          
@@ -32,7 +32,7 @@ export const CommomList = styled.ul.attrs({
     padding: 0;
     margin-top: 70px;
     margin-left: 20px;
-`;  
+`;
 
 export const CommomListItem = styled.li.attrs({  
 })`          
@@ -48,7 +48,7 @@ export const CommomListItem = styled.li.attrs({
         width: 1em; 
         margin-left: -1em;
     }
-`;  
+`;
 
 export const CommomAnimation = styled(Lottie).attrs( props => ({  
     options:{
@@ -65,4 +65,4 @@ export const CommomAnimation = styled(Lottie).attrs( props => ({
     margin-top: 140px ;
     max-width: 499px;
     width: 100%;
-`;  
+`;

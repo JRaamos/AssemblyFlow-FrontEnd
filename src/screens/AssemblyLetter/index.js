@@ -76,7 +76,7 @@ export default function AssemblyLetter({ documentId }) {
     let success = false;
     try {
       const printNode = document.getElementById(`print-${documentId}`);
-      success = savePdf(await createPreviewPdf(printNode), fileName);
+      success = await savePdf(await createPreviewPdf(printNode), fileName);
     } catch (error) {
       console.error("downloadLetterPDF", error);
     }

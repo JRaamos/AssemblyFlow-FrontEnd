@@ -205,8 +205,19 @@ export const createPdfFromElement = (node) => {
     return pdf;
 };
 
-export const savePdf = (pdf, fileName) => {
-  pdf.save(`${sanitizeWindowsFileName(fileName)}.pdf`);
+export const savePdf = async (pdf, fileName) => {
+  const safeFileName = `${sanitizeWindowsFileName(fileName)}.pdf`;
+  const desktopBridge = globalThis.window?.assemblyflowDesktop;
+
+  if (desktopBridge?.isDesktop && typeof desktopBridge.savePdf === "function") {
+    const result = await desktopBridge.savePdf({
+      bytes: new Uint8Array(pdf.output("arraybuffer")),
+      fileName: safeFileName,
+    });
+    return Boolean(result?.saved);
+  }
+
+  pdf.save(safeFileName);
   return true;
 };
 
@@ -218,7 +229,7 @@ export const downloadAsPDF = async (target, fileName) => {
   }
 
   try {
-    return savePdf(createPdfFromElement(node), fileName);
+    return await savePdf(createPdfFromElement(node), fileName);
   } catch (error) {
     console.error("downloadAsPDF", error);
     return false;

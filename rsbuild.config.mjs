@@ -11,6 +11,11 @@ export default defineConfig({
   plugins: [pluginReact({
     jsxRuntime: 'automatic',
   })],
+  output: {
+    // The packaged desktop app is loaded with file://, so emitted assets must
+    // be resolved relative to dist/index.html instead of the filesystem root.
+    assetPrefix: './',
+  },
   resolve: {
     resolveBaseUrl: './src',
     alias: {

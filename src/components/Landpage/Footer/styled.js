@@ -57,7 +57,7 @@ export const FooterPhoneContent = styled.div.attrs({
 `;
     
 export const FooterPhoneIcon = styled.img.attrs({  
-    src:'/icons/phone.svg'
+    src:'./icons/phone.svg'
 })`           
     width: 24px;
     margin-right: 20px;

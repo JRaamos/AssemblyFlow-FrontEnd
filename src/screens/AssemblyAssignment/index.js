@@ -104,7 +104,7 @@ export default function AssemblyAssignment({ documentId }) {
     let success = false;
 
     try {
-      success = savePdf(await createPreviewPdf(printNode), fileName);
+      success = await savePdf(await createPreviewPdf(printNode), fileName);
     } catch (error) {
       console.error("downloadAssignmentPDF", error);
     }

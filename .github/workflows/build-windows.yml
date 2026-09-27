@@ -1,0 +1,72 @@
+name: Build Windows installer
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.6
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run component tests
+        run: pnpm test
+
+      - name: Build web assets
+        run: pnpm build
+
+      - name: Verify packaged runtime inputs
+        run: pnpm desktop:verify
+
+      - name: Build unsigned Windows x64 installer
+        run: pnpm exec electron-builder --win nsis --x64
+
+      - name: Record installer metadata
+        shell: pwsh
+        run: |
+          $installer = Get-Item "release/AssemblyFlow-Setup-1.0.0-x64.exe"
+          $hash = (Get-FileHash $installer.FullName -Algorithm SHA256).Hash.ToLower()
+          @{
+            file = $installer.Name
+            bytes = $installer.Length
+            sha256 = $hash
+            signed = $false
+          } | ConvertTo-Json | Set-Content "release/windows-artifact.json"
+          "Installer: $($installer.Name)" >> $env:GITHUB_STEP_SUMMARY
+          "Size: $($installer.Length) bytes" >> $env:GITHUB_STEP_SUMMARY
+          "SHA-256: ``$hash``" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: AssemblyFlow-Windows-1.0.0-x64
+          path: |
+            release/AssemblyFlow-Setup-1.0.0-x64.exe
+            release/windows-artifact.json
+          if-no-files-found: error
+          retention-days: 30

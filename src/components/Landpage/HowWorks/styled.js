@@ -4,9 +4,9 @@ export const HowWorksContainer = styled.div.attrs({
 })`          
     position: relative;
 `;
-   
+
 export const HowWorksDecoration = styled.img.attrs({ 
-    src:`/icons/circle-1.svg`
+    src:`./icons/circle-1.svg`
 })`           
     width: 539px;
     position: absolute;
@@ -18,7 +18,7 @@ export const HowWorksTitleContent = styled.div.attrs({
 })`            
     padding: 60px 0;
 `;
-   
+
 
 export const HowWorksTitle = styled.div.attrs({ 
 })`            
@@ -32,4 +32,3 @@ export const HowWorksText = styled.div.attrs({
     font-size: 20px;
     color: ${ props => props.theme.palette.colors.grey };
 `;
-   

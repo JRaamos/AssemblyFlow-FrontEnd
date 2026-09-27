@@ -1,5 +1,0 @@
-# Electron AppGen
-
-```sh
-    $ yarn
-```

@@ -20,6 +20,7 @@ import {
 import {
   buildDocumentFileName,
   createPdfFromElement,
+  savePdf,
   sanitizeWindowsFileName,
 } from "utils/downloads";
 import { createPdfFromPreviewCanvas } from "utils/previewPdf";
@@ -515,11 +516,39 @@ it("creates a real A4 PDF with selectable text", () => {
 
   const pdf = createPdfFromElement(printRoot);
   const base64 = pdf.output("datauristring").split(",")[1];
-  cy.writeFile("cypress/downloads/assemblyflow-pdf-smoke.pdf", base64, "base64");
+  cy.writeFile("tmp/pdfs/assemblyflow-pdf-smoke.pdf", base64, "base64");
 
   expect(pdf.internal.pageSize.getWidth()).to.be.closeTo(210, 0.1);
   expect(pdf.internal.pageSize.getHeight()).to.be.closeTo(297, 0.1);
   expect(pdf.getNumberOfPages()).to.equal(1);
+});
+
+it("sends a validated PDF to the restricted desktop save bridge", async () => {
+  const printRoot = document.createElement("article");
+  printRoot.innerHTML = "<p>PDF desktop com acentuação.</p>";
+  const calls = [];
+
+  Object.defineProperty(window, "assemblyflowDesktop", {
+    configurable: true,
+    value: {
+      isDesktop: true,
+      savePdf: async (payload) => {
+        calls.push(payload);
+        return { saved: true, canceled: false };
+      },
+    },
+  });
+
+  try {
+    const saved = await savePdf(createPdfFromElement(printRoot), "Disc-br: João");
+    expect(saved).to.equal(true);
+    expect(calls).to.have.length(1);
+    expect(calls[0].fileName).to.equal("Disc-br-_João.pdf");
+    expect(calls[0].bytes).to.be.instanceOf(Uint8Array);
+    expect(String.fromCharCode(...calls[0].bytes.slice(0, 5))).to.equal("%PDF-");
+  } finally {
+    delete window.assemblyflowDesktop;
+  }
 });
 
 it("creates the Ass-br single-circuit program as a selectable landscape A4 PDF", () => {
@@ -541,7 +570,7 @@ it("creates the Ass-br single-circuit program as a selectable landscape A4 PDF",
   const base64 = pdf.output("datauristring").split(",")[1];
 
   cy.writeFile(
-    "output/pdf/assemblyflow-programa-ass-br-unico.pdf",
+    "tmp/pdfs/assemblyflow-programa-ass-br-unico.pdf",
     base64,
     "base64"
   );
@@ -567,7 +596,7 @@ it("creates the pioneer program as a selectable portrait A4 PDF", () => {
   const base64 = pdf.output("datauristring").split(",")[1];
 
   cy.writeFile(
-    "output/pdf/assemblyflow-programa-pioneiros.pdf",
+    "tmp/pdfs/assemblyflow-programa-pioneiros.pdf",
     base64,
     "base64"
   );

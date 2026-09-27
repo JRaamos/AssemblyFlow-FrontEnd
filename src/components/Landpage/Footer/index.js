@@ -48,11 +48,11 @@ export default function Footer(){
                                     <FooterSection>
                                         <FooterTitle>Nos siga nas redes</FooterTitle>
                                         <FooterLink>
-                                            <FooterLinkImage src={'/icons/insta.svg'} />
+                                            <FooterLinkImage src={'./icons/insta.svg'} />
                                             Instagram
                                         </FooterLink>
                                         <FooterLink>
-                                            <FooterLinkImage src={'/icons/face.svg'} />
+                                            <FooterLinkImage src={'./icons/face.svg'} />
                                             Facebook
                                         </FooterLink> 
                                     </FooterSection>

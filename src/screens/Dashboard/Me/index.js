@@ -42,7 +42,7 @@ export default function DashboardMe(){
                 <Row>
                     <Col></Col>
                     <Col sm={12} md={4}>
-                        <DarboardUserImage image={preview ? preview : '/images/no-user.png'}>
+                        <DarboardUserImage image={preview ? preview : './images/no-user.png'}>
                             <UploadFile onChange={takePic} onPreview={setPreview}>
                                 { fetching ? <Load /> : null }
                                 <DarboardUserImageAction>

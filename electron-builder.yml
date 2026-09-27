@@ -1,0 +1,43 @@
+extends: null
+
+appId: com.assemblyflow.desktop
+productName: AssemblyFlow
+copyright: Copyright © 2026 AssemblyFlow
+
+asar: true
+npmRebuild: false
+
+directories:
+  output: release
+
+files:
+  - dist/**/*
+  - electron/**/*
+  - public/icons/**/*
+  - package.json
+
+win:
+  executableName: AssemblyFlow
+  icon: public/icons/assemblyflow-windows.ico
+  artifactName: AssemblyFlow-Setup-${version}-${arch}.${ext}
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: AssemblyFlow
+  uninstallDisplayName: AssemblyFlow
+  deleteAppDataOnUninstall: false
+  installerIcon: public/icons/assemblyflow-windows.ico
+  uninstallerIcon: public/icons/assemblyflow-windows.ico
+  installerHeaderIcon: public/icons/assemblyflow-windows.ico
+
+mac:
+  identity: null

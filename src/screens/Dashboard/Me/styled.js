@@ -91,7 +91,7 @@ export const DarboardUserImageAction = styled.div.attrs({
 `;
 
 export const DarboardUserImageActionIcon = styled.img.attrs({ 
-    src:'/icons/cam.svg',
+    src:'./icons/cam.svg',
     alt:'cam-icon',
     width: 24
 })`            

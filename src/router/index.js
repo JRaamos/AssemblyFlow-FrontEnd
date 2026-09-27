@@ -1,7 +1,8 @@
 import React from "react";
 
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
+  HashRouter,
   Routes,
   Route
 } from "react-router-dom";
@@ -20,6 +21,10 @@ import AssemblyLetter from "screens/AssemblyLetter";
 import AssemblyProgram from "screens/AssemblyProgram";
 import AssemblyAssignment from "screens/AssemblyAssignment";
 import AssemblyTransition from "screens/AssemblyTransition";
+
+// Keep clean URLs for the web build and use a file://-safe router only in the
+// installed desktop application.
+const Router = window.location.protocol === "file:" ? HashRouter : BrowserRouter;
 
 export default function AppRouter() {
   return (

@@ -58,7 +58,7 @@ export default function DashboardFormMultiForm({ label, placeholder, value, onCh
                 <TitleContent>
                     <TitleContentText>{ label } { key + 1 }</TitleContentText> 
                     <Touch onClick={() => remove(item)}>
-                        <TableContentImage src={'/icons/trash.svg'} />
+                        <TableContentImage src={'./icons/trash.svg'} />
                     </Touch>
                 </TitleContent>
             </>, full:true },

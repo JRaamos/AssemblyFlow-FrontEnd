@@ -1,11 +1,16 @@
 {
     "name": "assemblyflow-frontend",
     "version": "1.0.0",
+    "description": "AssemblyFlow - documentos e programas de assembleia",
     "private": true,
     "type": "module",
+    "main": "electron/main.js",
+    "author": "AssemblyFlow",
+    "license": "UNLICENSED",
     "scripts": {
         "build": "rsbuild build",
         "dev": "rsbuild dev --open",
+        "dev:server": "rsbuild dev --port 3100",
         "start": "pnpm dev",
         "preview": "rsbuild preview",
         "test": "cypress run --component --browser electron",
@@ -13,9 +18,14 @@
         "test:cypress": "npx cypress open",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build",
-        "desktop": "electron electron"
+        "desktop": "pnpm desktop:dev",
+        "desktop:dev": "concurrently --kill-others --success first \"pnpm dev:server\" \"wait-on http://127.0.0.1:3100 && cross-env ASSEMBLYFLOW_DEV_URL=http://127.0.0.1:3100 electron .\"",
+        "desktop:verify": "node scripts/verify-desktop-build.mjs",
+        "desktop:pack": "pnpm build && electron-builder --dir",
+        "desktop:dist": "pnpm build && electron-builder",
+        "desktop:win": "pnpm build && electron-builder --win nsis --x64"
     },
-    "dependencies": {
+    "devDependencies": {
         "@ckeditor/ckeditor5-react": "^11.0.0",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -51,9 +61,7 @@
         "reactstrap": "^9.2.3",
         "socket.io-client": "^4.8.1",
         "styled-components": "^6.1.19",
-        "web-vitals": "^5.0.3"
-    },
-    "devDependencies": {
+        "web-vitals": "^5.0.3",
         "@babel/core": "^7.28.0",
         "@babel/preset-env": "^7.28.0",
         "@babel/preset-react": "^7.27.1",
@@ -70,12 +78,21 @@
         "@storybook/preset-create-react-app": "^9.0.15",
         "@storybook/react": "^9.0.15",
         "babel-loader": "^10.0.0",
+        "concurrently": "^10.0.5",
+        "cross-env": "^10.1.0",
         "cypress": "^14.5.1",
         "cypress-rspack-dev-server": "^1.1.0",
         "electron": "^37.7.1",
+        "electron-builder": "26.15.3",
         "path": "^0.12.7",
+        "wait-on": "^9.1.0",
         "webpack": "^5.99.9",
         "webpack-cli": "^6.0.1"
     },
-    "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
+    "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "electron"
+        ]
+    }
 }

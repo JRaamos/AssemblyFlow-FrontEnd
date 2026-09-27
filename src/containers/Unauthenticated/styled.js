@@ -18,7 +18,7 @@ export const SideBackgroundImageContainer = styled.div.attrs({
 `;
 export const SideBackgroundImage = styled.div.attrs({
 })`          
-    background: url(${p => p.url ? p.url : '/images/login.png'}) center center / cover no-repeat black;
+    background: url(${p => p.url ? p.url : './images/login.png'}) center center / cover no-repeat black;
     width: 100%;
     margin-left: 40px;
     height: calc(100% - 80px);
@@ -69,4 +69,4 @@ export const Content = styled.div.attrs({
 export const Touch = styled.div.attrs({
 })`           
     cursor: pointer;
-`; 
+`;

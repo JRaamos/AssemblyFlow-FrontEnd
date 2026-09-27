@@ -242,8 +242,7 @@ export const BadgeRemove = styled.div.attrs({
 `;
 
 export const BadgeRemoveIcon = styled.img.attrs({ 
-    src: '/icons/close-white.svg',
+    src: './icons/close-white.svg',
     width: 12
 })`
 `;
-
