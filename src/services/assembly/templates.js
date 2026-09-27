@@ -14,6 +14,12 @@ export const hydrateTemplate = (template = "", payload = {}) =>
     return value == null ? "" : String(value);
   });
 
+export const normalizeGeneralLetterEventFields = (template = "") =>
+  String(template).replace(
+    /\{\{\s*event\.(?:co|br)\.partA\.([a-zA-Z0-9_]+)\s*\}\}/g,
+    (_, field) => `{{letterEvent.${field}}}`
+  );
+
 export const buildDocumentPreview = (documentId, projectState, options = {}) => {
   const registry = DOCUMENT_REGISTRY_BY_ID[documentId];
   const document = projectState?.documents?.[documentId];
@@ -30,9 +36,13 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
   if (registry.kind === "letter") {
     const eventVariant = document.meta?.eventVariant === "co" ? "co" : "br";
     const letterEvent = projectState.events?.[eventVariant]?.partA || {};
+    const templateHtml =
+      documentId === "cg"
+        ? normalizeGeneralLetterEventFields(document.templateHtml)
+        : document.templateHtml;
 
     return {
-      html: hydrateTemplate(document.templateHtml, {
+      html: hydrateTemplate(templateHtml, {
         ...projectState,
         event: projectState.events,
         letterEvent,

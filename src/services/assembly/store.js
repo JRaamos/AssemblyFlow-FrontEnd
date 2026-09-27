@@ -6,6 +6,7 @@ import {
   defaultAssemblyProject,
 } from "./defaults";
 import { DOCUMENT_REGISTRY } from "./registry";
+import { normalizeGeneralLetterEventFields } from "./templates";
 
 export const ASSEMBLY_PROJECT_STORAGE_KEY = "assemblyflow:project:v3";
 export const ASSEMBLY_PROJECT_UPDATED_EVENT = "assemblyflow:project-updated";
@@ -80,7 +81,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 12,
+  schemaVersion: 13,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -115,6 +116,13 @@ export const loadAssemblyProject = (storage) => {
       savedDocument || legacyDocument
     );
   });
+
+  const savedGeneralLetterTemplate = project.documents.cg.templateHtml;
+  project.documents.cg.templateHtml = normalizeGeneralLetterEventFields(
+    savedGeneralLetterTemplate
+  );
+  const generalLetterFieldsWereNormalized =
+    project.documents.cg.templateHtml !== savedGeneralLetterTemplate;
 
   if ((metadataSource.schemaVersion || 0) < 4) {
     project.settings.circuitMode = "single";
@@ -151,7 +159,12 @@ export const loadAssemblyProject = (storage) => {
     });
   }
 
-  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 12) {
+  if (
+    !savedMetadata ||
+    !hasVersionedDocument ||
+    (metadataSource.schemaVersion || 0) < 13 ||
+    generalLetterFieldsWereNormalized
+  ) {
     saveAssemblyProject(project, storage);
   }
 

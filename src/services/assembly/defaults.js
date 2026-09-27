@@ -110,9 +110,9 @@ export const defaultAssemblyProject = {
         <p><strong>À todas as congregações</strong></p>
         <p>Prezados irmãos,</p>
         <p>É com prazer que lhes falamos sobre a nossa próxima assembleia de circuito, conforme detalhes abaixo:</p>
-        <p><strong>Tema:</strong> {{event.br.partA.theme}}</p>
-        <p><strong>Data:</strong> {{event.br.partA.date}}</p>
-        <p><strong>Local:</strong> {{event.br.partA.venue}}</p>
+        <p><strong>Tema:</strong> {{letterEvent.theme}}</p>
+        <p><strong>Data:</strong> {{letterEvent.date}}</p>
+        <p><strong>Local:</strong> {{letterEvent.venue}}</p>
         <p>Pedimos que todos façam os preparativos necessários para estar presentes e apoiar plenamente este arranjo teocrático. Também lembramos a importância de adaptar esta carta segundo as circunstâncias locais de cada circuito.</p>
         <p>Em caso de dúvida, entrem em contato com {{traveler.name}} pelo telefone {{traveler.phone}} ou e-mail {{traveler.email}}.</p>
         <p>Com amor cristão,</p>

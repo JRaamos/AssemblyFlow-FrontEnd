@@ -11,6 +11,7 @@ import {
 } from "services/assembly/registry";
 import { recalculateProgram, reorderRows, toggleIntervalRow } from "services/assembly/program";
 import {
+  ASSEMBLY_PROJECT_STORAGE_KEY,
   getDocumentStorageKey,
   loadAssemblyProject,
   resetAssemblyProjectSection,
@@ -61,6 +62,55 @@ it("switches the general letter between Ass Co and Ass Br using the same model",
   expect(coPreview.html).to.contain(project.events.co.partA.date);
   expect(coPreview.html).to.contain(project.events.co.partA.venue);
   expect(project.documents.cg.templateHtml).to.equal(template);
+});
+
+it("renders legacy general-letter fields from the selected assembly", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  project.documents.cg.templateHtml = `
+    <p>{{event.br.partA.theme}}</p>
+    <p>{{event.br.partA.date}}</p>
+    <p>{{event.br.partA.venue}}</p>
+  `;
+  project.documents.cg.meta.eventVariant = "co";
+
+  const preview = buildDocumentPreview("cg", project);
+  expect(preview.html).to.contain(project.events.co.partA.theme);
+  expect(preview.html).to.contain(project.events.co.partA.date);
+  expect(preview.html).to.contain(project.events.co.partA.venue);
+  expect(preview.html).not.to.contain(project.events.br.partA.theme);
+});
+
+it("normalizes a saved general letter without replacing its edited content", () => {
+  const storage = createMemoryStorage();
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  project.documents.cg.templateHtml = `
+    <p>Texto personalizado</p>
+    <p>{{event.br.partA.theme}}</p>
+    <p>{{event.br.partA.date}}</p>
+    <p>{{event.br.partA.venue}}</p>
+  `;
+
+  storage.setItem(
+    ASSEMBLY_PROJECT_STORAGE_KEY,
+    JSON.stringify({
+      settings: project.settings,
+      traveler: project.traveler,
+      events: project.events,
+      circuitComposition: project.circuitComposition,
+      schemaVersion: 13,
+    })
+  );
+  storage.setItem(
+    getDocumentStorageKey("cg"),
+    JSON.stringify(project.documents.cg)
+  );
+
+  const migrated = loadAssemblyProject(storage);
+  expect(migrated.documents.cg.templateHtml).to.contain("Texto personalizado");
+  expect(migrated.documents.cg.templateHtml).to.contain("{{letterEvent.theme}}");
+  expect(migrated.documents.cg.templateHtml).to.contain("{{letterEvent.date}}");
+  expect(migrated.documents.cg.templateHtml).to.contain("{{letterEvent.venue}}");
+  expect(migrated.documents.cg.templateHtml).not.to.contain("event.br.partA");
 });
 
 it("uses the requested default theme for each assembly everywhere", () => {
