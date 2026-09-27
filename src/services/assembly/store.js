@@ -80,7 +80,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 4,
+  schemaVersion: 6,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -120,7 +120,16 @@ export const loadAssemblyProject = (storage) => {
     project.settings.circuitMode = "single";
   }
 
-  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 4) {
+  if ((metadataSource.schemaVersion || 0) < 5) {
+    project.events.pioneers = clone(defaults.events.pioneers);
+  }
+
+  if ((metadataSource.schemaVersion || 0) < 6) {
+    project.documents.pio.meta.sections.partA.theme =
+      defaults.documents.pio.meta.sections.partA.theme;
+  }
+
+  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 6) {
     saveAssemblyProject(project, storage);
   }
 

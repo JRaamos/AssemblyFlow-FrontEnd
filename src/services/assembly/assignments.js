@@ -2,6 +2,13 @@ import { recalculateProgram } from "./program";
 
 const assignmentLinks = [
   {
+    baseId: "disc-pio",
+    programId: "pio",
+    kind: "pioneer",
+    includeAllSpeakers: true,
+    rowIds: { partA: [] },
+  },
+  {
     baseId: "disc-co",
     partBId: "discb-co",
     programId: "ass-co",
@@ -101,7 +108,7 @@ const getRequestedPart = (documentId, part) => {
 };
 
 const getAssignmentTitle = (row, kind) => {
-  if (kind === "discourse") return row.title;
+  if (kind === "discourse" || kind === "pioneer") return row.title;
 
   const title = normalize(row.title);
   if (title.includes("presidencia") && title.includes("oracao")) {
@@ -141,12 +148,14 @@ export const getAssignmentView = (project, documentId, requestedPart) => {
       document,
       programId: null,
       records: Array.isArray(document?.records) ? document.records : [],
+      supportsParts: false,
     };
   }
 
   const circuitMode = getCircuitMode(project);
   const selectedPart = getRequestedPart(documentId, requestedPart);
-  const activePart = circuitMode === "single" ? "partA" : selectedPart;
+  const supportsParts = Boolean(link.partBId);
+  const activePart = circuitMode === "single" || !supportsParts ? "partA" : selectedPart;
   const assignmentDocumentId = activePart === "partB" ? link.partBId : link.baseId;
   const document = project?.documents?.[assignmentDocumentId];
   const programDocument = project?.documents?.[link.programId];
@@ -155,9 +164,16 @@ export const getAssignmentView = (project, documentId, requestedPart) => {
   const rows = recalculateProgram({ meta, rows: section }).rows;
   const allowedIds = new Set(link.rowIds[activePart] || []);
   const storedRecords = Array.isArray(document?.records) ? document.records : [];
+  const isLinkedSpeaker = (row) => {
+    if (!link.includeAllSpeakers) return allowedIds.has(row.id);
+    const titleWords = normalize(row.title).split(/[^a-z0-9]+/).filter(Boolean);
+    return !["cantico", "oracao", "intervalo"].some((word) =>
+      titleWords.includes(word)
+    );
+  };
 
   const records = rows
-    .filter((row) => allowedIds.has(row.id) && String(row.speaker || "").trim())
+    .filter((row) => isLinkedSpeaker(row) && String(row.speaker || "").trim())
     .map((row) => {
       const stored = findStoredRecord(storedRecords, row);
       return {
@@ -172,7 +188,9 @@ export const getAssignmentView = (project, documentId, requestedPart) => {
         confirmation: stored?.confirmation ?? row.confirmation ?? false,
         notes:
           stored?.notes ??
-          (link.kind === "discourse" ? "Veja esboço, em anexo." : ""),
+          (link.kind === "discourse" || link.kind === "pioneer"
+            ? "Veja esboço, em anexo."
+            : ""),
       };
     });
 
@@ -185,6 +203,7 @@ export const getAssignmentView = (project, documentId, requestedPart) => {
     kind: link.kind,
     programId: link.programId,
     records,
+    supportsParts,
   };
 };
 

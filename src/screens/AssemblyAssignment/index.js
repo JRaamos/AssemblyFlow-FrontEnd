@@ -103,7 +103,7 @@ export default function AssemblyAssignment({ documentId }) {
       documentId: assignmentView.assignmentDocumentId,
       speaker: currentRecord?.speaker,
       date: event?.date,
-      part: circuitMode === "parts"
+      part: circuitMode === "parts" && assignmentView.supportsParts
         ? assignmentView.activePart === "partA" ? "parte-a" : "parte-b"
         : "unico",
     });
@@ -121,7 +121,7 @@ export default function AssemblyAssignment({ documentId }) {
         </ScreenText>
       </ScreenCard>
 
-      {circuitMode === "parts" ? (
+      {circuitMode === "parts" && assignmentView.supportsParts ? (
         <SectionTabs aria-label="Parte das designações">
           <SectionTab
             type="button"

@@ -68,9 +68,10 @@ export const defaultAssemblyProject = {
     pioneers: {
       partA: defaultEvent({
         date: "Data a confirmar",
-        theme: "‘Deus lhes dá tanto o desejo como o poder de agir’ — Fil. 2:13",
-        rehearsalVenue: "",
-        rehearsalDateTime: "",
+        theme: "“Eu os reanimarei” — Mat. 11:28",
+        venue: "(Às 19:30)",
+        rehearsalVenue: "Salão do Reino das congregações Norte/Central de Coité",
+        rehearsalDateTime: "21 de dezembro de 2025, às 15 horas",
       }),
       partB: defaultEvent({
         date: "Data a confirmar",

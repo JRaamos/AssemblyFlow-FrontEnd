@@ -82,6 +82,41 @@ const discourseTemplate = (eventPath) => `
   </footer>
 `;
 
+const pioneerAssignmentTemplate = `
+  <article class="pioneer-assignment">
+    <header class="document-letterhead">
+      <p><em>{{traveler.name}} - {{traveler.phone}} - {{traveler.email}}</em></p>
+      <p class="document-date">{{documentMeta.letterDate}}</p>
+    </header>
+    <section class="document-recipient keep-together">
+      <p><strong>{{record.speaker}}</strong><br />C. <strong><em>{{record.congregation}}</em></strong></p>
+      <p>Prezado irmão:</p>
+      <p>Esta constitui sua designação para participar do programa espiritual da reunião com os pioneiros regulares, especiais e missionários. A reunião será realizada no dia, hora e local indicados abaixo. O esboço segue, em anexo. Queira confirmar, por favor, pela caixa de entrada.</p>
+    </section>
+    <dl class="document-facts keep-together">
+      <div><dt>LOCAL:</dt><dd>{{event.pioneers.partA.venue}}</dd></div>
+      <div><dt>DIA:</dt><dd>{{event.pioneers.partA.date}}</dd></div>
+      <div><dt>HORA:</dt><dd>{{record.time}}</dd></div>
+      <div><dt>DESIGNAÇÃO:</dt><dd><strong>{{record.title}}</strong></dd></div>
+      <div><dt>TEMPO:</dt><dd>{{record.durationMin}} min</dd></div>
+      <div><dt>ENSAIO DE CENAS / ENTREVISTAS:</dt><dd>{{event.pioneers.partA.rehearsalVenue}}<br />{{event.pioneers.partA.rehearsalAddress}}<br />{{event.pioneers.partA.rehearsalDateTime}}</dd></div>
+    </dl>
+    <p class="document-rehearsal-note">Realize vários ensaios e com a devida antecedência. Não deixe para a última hora. Entregue o quanto antes as informações que os participantes necessitam. Se o esboço não for específico, tanto irmãos como irmãs podem ser usados nas entrevistas, monólogos e demonstrações.</p>
+    <section class="document-section pioneer-guidance">
+      <h2>ORIENTAÇÕES GERAIS:</h2>
+      <p><strong>a) PREPARAÇÃO:</strong> Siga de perto a matéria e o desenrolar das ideias, visando salientar o tema e os pontos principais. Não é necessário usar todos os pormenores, mas apenas o que for pertinente à sua parte. Pode-se também desenvolver e enriquecer o esboço com argumentos, ilustrações e outros recursos, mas sem mudar o significado nem interferir nos pontos principais, dentro do tempo concedido. Não introduza matéria secular e ideias pessoais. Evite ilustrações questionáveis, dramáticas ou ofensivas. Não é necessário ler todos os textos, mas deve-se dar atenção especial àqueles que apoiam os pontos que devem ser enfatizados. Explique, raciocine sobre os textos e mostre como se aplicam.</p>
+      <p><strong>b) MODO DE FALAR:</strong> Fale de modo espontâneo, claro, entusiástico, com convicção e bom volume. É bom não tentar memorizar as palavras e nem ter notas muito detalhadas. Isso criaria uma preocupação excessiva com a fraseologia exata e comprometeria a naturalidade. Concentre-se nas ideias, não em palavras. Não transforme seu esboço num manuscrito.</p>
+      <p><strong>c) ESCOLHA DOS PARTICIPANTES E VESTIMENTA:</strong> Utilize apenas pioneiros cuja vida seja coerente com o que será dito no programa. Não use aqueles com reputação de vestimenta imodesta. Se possível, use pioneiros que já farão outras partes do programa.</p>
+      <p><strong>d) ENTREVISTAS:</strong> Evite perguntas que exijam respostas longas. Faça mais perguntas para obter respostas curtas. Em geral, a resposta a cada pergunta não deve demorar mais do que 30 a 60 segundos. O entrevistado deve falar olhando para o orador e não para a assistência. Não se deve pedir ao entrevistado que dê recomendações, conselhos ou sugestões à assistência. Seria melhor que o entrevistado não lesse e nem decorasse suas respostas. As expressões devem ser espontâneas e cativantes, todavia não há objeção ao uso de um esboço.</p>
+    </section>
+    <p>Torne sua apresentação assunto de oração a Jeová e estamos certos de que Ele abençoará seus esforços!</p>
+    <footer class="document-signature keep-together">
+      <p>Seu irmão,</p>
+      <p><strong>{{traveler.name}}</strong><br />{{traveler.circuitNumber}}</p>
+    </footer>
+  </article>
+`;
+
 const prayerOpening = `
   <p><strong>INSTRUÇÕES PARA A ORAÇÃO INICIAL:</strong> Deve ser específica e breve. O irmão deve se concentrar nas bênçãos para o programa espiritual, quanto à atenção da assistência e à transmissão do ensino pelos participantes. Evite excesso de palavras e generalidades. Em virtude do tempo limitado, sua oração não deveria ultrapassar 2 minutos.</p>
 `;
@@ -209,7 +244,7 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
           code: "BA-033",
           title: "REUNIÃO ESPECIAL COM PIONEIROS REGULARES, ESPECIAIS E MISSIONÁRIOS",
           date: "Data a confirmar",
-          theme: "“Eu os reanimarei” - Mat. 11:28",
+          theme: "“Eu os reanimarei” — Mat. 11:28",
           start: "08:30",
         },
       },
@@ -350,6 +385,14 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
     templateHtml: discourseTemplate("co.partA"),
     meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "disc-co-1", speaker: "Oderlan Sodré", congregation: "Norte de Coité", title: "Como tornamos conhecida a verdade?", durationMin: 19, time: "11:14", notes: "Veja esboço, em anexo." }],
+  },
+  "disc-pio": {
+    templateHtml: pioneerAssignmentTemplate,
+    meta: {
+      title: "Designação para a Reunião com Pioneiros",
+      letterDate: "19 de setembro de 2026",
+    },
+    records: [],
   },
   "discb-co": {
     templateHtml: discourseTemplate("co.partB"),

@@ -22,6 +22,7 @@ import {
   sanitizeWindowsFileName,
 } from "utils/downloads";
 import { createAssemblyProgramPdf } from "utils/programPdf";
+import { createPioneerProgramPdf } from "utils/pioneerProgramPdf";
 
 const createMemoryStorage = () => {
   const values = new Map();
@@ -188,6 +189,63 @@ it("applies the workbook linkage to the other discourse and presidency areas", (
   ]);
 });
 
+it("creates one pioneer assignment letter for every speaker in the Pio program", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const view = getAssignmentView(project, "disc-pio", "partA");
+
+  expect(view.programId).to.equal("pio");
+  expect(view.supportsParts).to.equal(false);
+  expect(view.records).to.have.length(10);
+  expect(view.records.map(({ speaker }) => speaker)).to.deep.equal([
+    "Ronivaldo S. Ramos",
+    "Elenilson Cunha",
+    "Daniel Oliveira",
+    "André Cunha",
+    "Lucas Rogério",
+    "Hítalo Silva",
+    "Ítalo Almeida",
+    "Jonathan Febraio",
+    "Marcos Lima",
+    "Ronivaldo S. Ramos",
+  ]);
+  expect(view.records[1]).to.include({
+    title: "‘Sou de temperamento brando e humilde de coração’",
+    congregation: "Norte de Coité",
+    time: "08:50",
+    durationMin: 15,
+  });
+
+  const preview = buildDocumentPreview("disc-pio", project, {
+    part: "partA",
+    recordIndex: 1,
+  });
+  expect(preview.html).to.contain("Elenilson Cunha");
+  expect(preview.html).to.contain("ORIENTAÇÕES GERAIS");
+});
+
+it("writes pioneer assignment edits back to the Pio program", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const view = getAssignmentView(project, "disc-pio", "partA");
+  const record = view.records[2];
+  const updated = updateLinkedAssignment(
+    project,
+    "disc-pio",
+    "partA",
+    record,
+    "speaker",
+    "Orador pioneiro atualizado"
+  );
+
+  expect(
+    updated.documents.pio.records.partA.find(
+      ({ id }) => id === record.sourceProgramRowId
+    ).speaker
+  ).to.equal("Orador pioneiro atualizado");
+  expect(getAssignmentView(updated, "disc-pio", "partA").records[2].speaker).to.equal(
+    "Orador pioneiro atualizado"
+  );
+});
+
 it("writes assignment edits back to the linked assembly program", () => {
   const project = cloneAssemblyProject(defaultAssemblyProject);
   const view = getAssignmentView(project, "disc-br", "partA");
@@ -245,7 +303,7 @@ it("persists, reloads and restores only the selected document", () => {
 
 it("maps every official workbook sheet to its print area", () => {
   const official = DOCUMENT_REGISTRY.filter(({ sourceStatus }) => sourceStatus === "official");
-  expect(official).to.have.length(15);
+  expect(official).to.have.length(16);
   official.forEach((document) => {
     expect(document.sourceSheet).to.be.a("string").and.not.be.empty;
     expect(document.printArea).to.match(/^[A-Z]+\d+:[A-Z]+\d+$/);
@@ -314,4 +372,30 @@ it("creates the Ass-br single-circuit program as a selectable landscape A4 PDF",
   const pageCommands = pdf.internal.pages.flat().join(" ");
   expect(pageCommands).not.to.contain("PARTE A");
   expect(pageCommands).to.contain("ENSAIO DO PROGRAMA DA ASSEMBLEIA");
+});
+
+it("creates the pioneer program as a selectable portrait A4 PDF", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const program = recalculateProgram({
+    meta: project.documents.pio.meta.sections.partA,
+    rows: project.documents.pio.records.partA,
+  });
+  const pdf = createPioneerProgramPdf({
+    program,
+    event: project.events.pioneers.partA,
+  });
+  const base64 = pdf.output("datauristring").split(",")[1];
+
+  cy.writeFile(
+    "output/pdf/assemblyflow-programa-pioneiros.pdf",
+    base64,
+    "base64"
+  );
+
+  expect(pdf.internal.pageSize.getWidth()).to.be.closeTo(210, 0.1);
+  expect(pdf.internal.pageSize.getHeight()).to.be.closeTo(297, 0.1);
+  expect(pdf.getNumberOfPages()).to.equal(1);
+  const pageCommands = pdf.internal.pages.flat().join(" ");
+  expect(pageCommands).to.contain("PROGRAMA ESPIRITUAL");
+  expect(pageCommands).to.contain("ENSAIO DE CENAS / ENTREVISTAS");
 });

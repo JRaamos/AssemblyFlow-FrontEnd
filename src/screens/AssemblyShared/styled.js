@@ -133,6 +133,33 @@ export const PreviewContent = styled.article`
     text-align: center;
   }
 
+  .pioneer-assignment {
+    font-size: 10.5px;
+    line-height: 1.32;
+  }
+
+  .pioneer-assignment p {
+    margin-bottom: 7px;
+  }
+
+  .pioneer-assignment .document-facts {
+    margin: 12px 0;
+  }
+
+  .pioneer-assignment .document-facts > div {
+    grid-template-columns: 190px minmax(0, 1fr);
+    margin-bottom: 2px;
+  }
+
+  .pioneer-assignment .document-facts dt {
+    color: #172033;
+  }
+
+  .pioneer-assignment h2 {
+    margin-top: 12px;
+    font-size: 11px;
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;

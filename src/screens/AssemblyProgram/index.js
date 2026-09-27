@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import Button from "components/Form/Button";
+import PioneerProgramPrintSheet from "components/PioneerProgramPrintSheet";
 import ProgramConstruction from "components/ProgramConstruction";
 import ProgramPrintSheet from "components/ProgramPrintSheet";
 import ContainerAuthenticated from "containers/Authenticated";
@@ -14,6 +15,7 @@ import {
 import { getCircuitMode } from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
+import { downloadPioneerProgramPdf } from "utils/pioneerProgramPdf";
 import { downloadAssemblyProgramPdf } from "utils/programPdf";
 import { ButtonContainer, FormSpacer } from "ui/styled";
 
@@ -48,6 +50,8 @@ export default function AssemblyProgram({ documentId }) {
 
   const assemblyDocument = project.documents[documentId];
   const isAssemblyProgram = documentId === "ass-co" || documentId === "ass-br";
+  const isPioneerProgram = documentId === "pio";
+  const hasFaithfulPdf = isAssemblyProgram || isPioneerProgram;
   const circuitMode = isAssemblyProgram ? getCircuitMode(project) : "single";
   const activeSection = circuitMode === "single" ? "partA" : activePart;
   const eventScope = registry.variant === "br"
@@ -61,8 +65,16 @@ export default function AssemblyProgram({ documentId }) {
     : activeSection === "partA"
       ? "PARTE A"
       : "PARTE B";
-  const variantLabel = registry.variant === "br" ? "CA-BR" : "CA-CO";
-  const footerVariantLabel = registry.variant === "br" ? "CA-br" : "CA-co";
+  const variantLabel = registry.variant === "br"
+    ? "CA-BR"
+    : registry.variant === "co"
+      ? "CA-CO"
+      : "PIONEIROS";
+  const footerVariantLabel = registry.variant === "br"
+    ? "CA-br"
+    : registry.variant === "co"
+      ? "CA-co"
+      : "Pioneiros";
 
   const program = useMemo(() => {
     const section = {
@@ -264,20 +276,28 @@ export default function AssemblyProgram({ documentId }) {
           : "unico"
         : "",
     });
-    const success = isAssemblyProgram
-      ? await downloadAssemblyProgramPdf(
-          {
-            program,
-            partLabel,
-            variantLabel,
-            footerVariantLabel,
-            singleProgram: circuitMode === "single",
-            rehearsalDateTime: currentEvent.rehearsalDateTime,
-            rehearsalVenue: currentEvent.rehearsalVenue,
-          },
-          fileName
-        )
-      : await downloadAsPDF(`print-${documentId}`, fileName);
+    let success;
+    if (isAssemblyProgram) {
+      success = await downloadAssemblyProgramPdf(
+        {
+          program,
+          partLabel,
+          variantLabel,
+          footerVariantLabel,
+          singleProgram: circuitMode === "single",
+          rehearsalDateTime: currentEvent.rehearsalDateTime,
+          rehearsalVenue: currentEvent.rehearsalVenue,
+        },
+        fileName
+      );
+    } else if (isPioneerProgram) {
+      success = await downloadPioneerProgramPdf(
+        { program, event: currentEvent },
+        fileName
+      );
+    } else {
+      success = await downloadAsPDF(`print-${documentId}`, fileName);
+    }
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
   };
 
@@ -286,9 +306,11 @@ export default function AssemblyProgram({ documentId }) {
       <ScreenTitle>{assemblyDocument.meta.title}</ScreenTitle>
       <ScreenCard>
         <ScreenText>
-          {circuitMode === "single"
-            ? "Programa de circuito único, editável e pronto para exportação em PDF."
-            : "Programa editável com Partes A/B e exportação em PDF."}
+          {isPioneerProgram
+            ? "Programa da reunião com pioneiros, editável e pronto para exportação fiel em PDF."
+            : circuitMode === "single"
+              ? "Programa de circuito único, editável e pronto para exportação em PDF."
+              : "Programa editável com Partes A/B e exportação em PDF."}
         </ScreenText>
       </ScreenCard>
 
@@ -356,18 +378,22 @@ export default function AssemblyProgram({ documentId }) {
         />
       </ScreenCard>
 
-      {isAssemblyProgram ? (
+      {hasFaithfulPdf ? (
         <ScreenCard>
           <SmallLabel>Prévia fiel do PDF</SmallLabel>
-          <ProgramPrintSheet
-            program={program}
-            partLabel={partLabel}
-            variantLabel={variantLabel}
-            footerVariantLabel={footerVariantLabel}
-            singleProgram={circuitMode === "single"}
-            rehearsalDateTime={currentEvent.rehearsalDateTime}
-            rehearsalVenue={currentEvent.rehearsalVenue}
-          />
+          {isPioneerProgram ? (
+            <PioneerProgramPrintSheet program={program} event={currentEvent} />
+          ) : (
+            <ProgramPrintSheet
+              program={program}
+              partLabel={partLabel}
+              variantLabel={variantLabel}
+              footerVariantLabel={footerVariantLabel}
+              singleProgram={circuitMode === "single"}
+              rehearsalDateTime={currentEvent.rehearsalDateTime}
+              rehearsalVenue={currentEvent.rehearsalVenue}
+            />
+          )}
         </ScreenCard>
       ) : null}
 

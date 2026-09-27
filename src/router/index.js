@@ -38,6 +38,7 @@ export default function AppRouter() {
           <Route path="/cg" exact element={<AssemblyLetter documentId="cg" />} />
           <Route path="/dm" exact element={<AssemblyLetter documentId="dm" />} />
           <Route path="/pio" exact element={<AssemblyProgram documentId="pio" />} />
+          <Route path="/disc-pio" exact element={<AssemblyAssignment documentId="disc-pio" />} />
           <Route path="/ass-co" exact element={<AssemblyProgram documentId="ass-co" />} />
           <Route path="/ass-br" exact element={<AssemblyProgram documentId="ass-br" />} />
 

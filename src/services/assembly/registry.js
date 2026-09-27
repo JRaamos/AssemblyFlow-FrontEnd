@@ -50,6 +50,7 @@ export const DOCUMENT_REGISTRY = [
   officialDocument({ id: "cg", menuLabel: "Carta Geral", title: "Carta Geral", kind: "letter", variant: "co", sourceSheet: "CG", printArea: "D8:S49" }),
   officialDocument({ id: "dm", menuLabel: "Carta Donativos", title: "Carta Donativos", kind: "letter", variant: "co", sourceSheet: "DM", printArea: "B5:J46" }),
   officialDocument({ id: "pio", menuLabel: "Pioneiros", title: "Pioneiros", kind: "program", variant: "pioneers", sourceSheet: "Pio", printArea: "B3:I64" }),
+  officialDocument({ id: "disc-pio", menuLabel: "Disc-pio", title: "Designação para a Reunião com Pioneiros", kind: "assignment", variant: "pioneers", sourceSheet: "Pio", printArea: "B34:I64", part: "A" }),
   officialDocument({ id: "ass-co", menuLabel: "Ass-co", title: "Programa da Assembleia - CA-co", kind: "program", variant: "co", sourceSheet: "Ass-co", printArea: "C3:P69", supportsParts: true }),
   officialDocument({ id: "disc-co", menuLabel: "Disc-co", title: "Designação de Discurso - CA-co", kind: "assignment", variant: "co", sourceSheet: "Disc-co", printArea: "D3:U42", part: "A" }),
   officialDocument({ id: "discb-co", menuLabel: "DiscB-co", title: "Designação de Discurso - CA-co Parte B", kind: "assignment", variant: "co", sourceSheet: "DiscB-co", printArea: "D3:U42", part: "B" }),
