@@ -38,7 +38,25 @@ it("hydrates the default general letter with project data", () => {
   const preview = buildDocumentPreview("cg", project);
 
   expect(preview.html).to.contain(project.traveler.name);
-  expect(preview.html).to.contain(project.events.br.partA.theme);
+  expect(preview.html).to.contain(`<strong>TEMA:</strong> ${project.events.br.partA.theme}`);
+  expect(preview.html).to.contain(`<strong>LOCAL:</strong> ${project.events.br.partA.venue}`);
+  expect(preview.html).to.contain(`<strong>DATA:</strong> ${project.events.br.partA.date}`);
+  expect(preview.html).not.to.contain("{{event.");
+});
+
+it("uses the requested default theme for each assembly everywhere", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const expected = {
+    co: "Feliz É Aquele Que Confia em Jeová",
+    br: "Encontre a mais plena alegria em Jeová",
+  };
+
+  ["partA", "partB"].forEach((part) => {
+    expect(project.events.co[part].theme).to.equal(expected.co);
+    expect(project.events.br[part].theme).to.equal(expected.br);
+    expect(project.documents["ass-co"].meta.sections[part].theme).to.equal(expected.co);
+    expect(project.documents["ass-br"].meta.sections[part].theme).to.equal(expected.br);
+  });
 });
 
 it("recalculates program rows and interval toggling", () => {

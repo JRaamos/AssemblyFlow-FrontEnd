@@ -47,7 +47,7 @@ const legacyDocument = ({ id, menuLabel, title, variant }) => ({
 });
 
 export const DOCUMENT_REGISTRY = [
-  officialDocument({ id: "cg", menuLabel: "Carta Geral", title: "Carta Geral", kind: "letter", variant: "co", sourceSheet: "CG", printArea: "D8:S49" }),
+  officialDocument({ id: "cg", menuLabel: "Carta Geral", title: "Carta Geral", kind: "letter", variant: "br", sourceSheet: "CG", printArea: "D8:S49" }),
   officialDocument({ id: "dm", menuLabel: "Carta Donativos", title: "Carta Donativos", kind: "letter", variant: "co", sourceSheet: "DM", printArea: "B5:J46" }),
   officialDocument({ id: "pio", menuLabel: "Pioneiros", title: "Pioneiros", kind: "program", variant: "pioneers", sourceSheet: "Pio", printArea: "B3:I64" }),
   officialDocument({ id: "disc-pio", menuLabel: "Disc-pio", title: "Designação para a Reunião com Pioneiros", kind: "assignment", variant: "pioneers", sourceSheet: "Pio", printArea: "B34:I64", part: "A" }),

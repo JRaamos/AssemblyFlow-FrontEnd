@@ -21,12 +21,13 @@ const traveler = {
   email: "ronivaldoeleilce@hotmail.com",
 };
 
-const sharedAssemblyTheme = "“Ouça o Que o Espírito Diz às Congregações”— Apocalipse 3:22";
+const coAssemblyTheme = "Feliz É Aquele Que Confia em Jeová";
+const brAssemblyTheme = "Encontre a mais plena alegria em Jeová";
 const sharedVenue = "Salão de Assembleias de Amélia Rodrigues";
 
 const defaultEvent = (overrides = {}) => ({
   date: "06 de dezembro de 2026",
-  theme: sharedAssemblyTheme,
+  theme: coAssemblyTheme,
   venue: sharedVenue,
   venueAddress: "",
   rehearsalVenue: "Congregação Norte/Central de Coité",
@@ -44,11 +45,13 @@ export const defaultAssemblyProject = {
     co: {
       partA: defaultEvent({
         date: "28 de fevereiro de 2027",
+        theme: coAssemblyTheme,
         rehearsalVenue: "Salão do Reino das congregações Norte/Central de Coité",
         rehearsalDateTime: "09 de janeiro de 2027",
       }),
       partB: defaultEvent({
         date: "28 de fevereiro de 2027",
+        theme: coAssemblyTheme,
         rehearsalVenue: "Salão do Reino das congregações Norte/Central de Coité",
         rehearsalDateTime: "09 de janeiro de 2027",
       }),
@@ -56,11 +59,13 @@ export const defaultAssemblyProject = {
     br: {
       partA: defaultEvent({
         date: "06 de dezembro de 2026",
+        theme: brAssemblyTheme,
         rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
         rehearsalDateTime: "09 de novembro 2026, às 19:30",
       }),
       partB: defaultEvent({
         date: "06 de dezembro de 2026",
+        theme: brAssemblyTheme,
         rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
         rehearsalDateTime: "09 de novembro 2026, às 19:30",
       }),
@@ -202,14 +207,14 @@ export const defaultAssemblyProject = {
             code: "BA-033",
             title: "PROGRAMA ESPIRITUAL DA ASSEMBLEIA DE CIRCUITO",
             date: "28 de fevereiro de 2027",
-            theme: "Como as boas novas estão mudando a vida das pessoas?",
+            theme: coAssemblyTheme,
             start: "09:40",
           },
           partB: {
             code: "BA-033",
             title: "PROGRAMA ESPIRITUAL DA ASSEMBLEIA DE CIRCUITO",
             date: "28 de fevereiro de 2027",
-            theme: "Nós nos recomendamos como ministros de Deus pela perseverança",
+            theme: coAssemblyTheme,
             start: "09:40",
           },
         },
@@ -273,14 +278,14 @@ export const defaultAssemblyProject = {
             code: "BA-033",
             title: "PROGRAMA ESPIRITUAL DA ASSEMBLEIA DE CIRCUITO",
             date: "06 de dezembro de 2026",
-            theme: sharedAssemblyTheme,
+            theme: brAssemblyTheme,
             start: "09:40",
           },
           partB: {
             code: "BA-033",
             title: "PROGRAMA ESPIRITUAL DA ASSEMBLEIA DE CIRCUITO",
             date: "06 de dezembro de 2026",
-            theme: "Empenhe-se pela paz",
+            theme: brAssemblyTheme,
             start: "09:40",
           },
         },

@@ -80,7 +80,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 6,
+  schemaVersion: 8,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -129,7 +129,22 @@ export const loadAssemblyProject = (storage) => {
       defaults.documents.pio.meta.sections.partA.theme;
   }
 
-  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 6) {
+  if ((metadataSource.schemaVersion || 0) < 7) {
+    ["partA", "partB"].forEach((part) => {
+      project.events.co[part].theme = defaults.events.co[part].theme;
+      project.events.br[part].theme = defaults.events.br[part].theme;
+      project.documents["ass-co"].meta.sections[part].theme =
+        defaults.documents["ass-co"].meta.sections[part].theme;
+      project.documents["ass-br"].meta.sections[part].theme =
+        defaults.documents["ass-br"].meta.sections[part].theme;
+    });
+  }
+
+  if ((metadataSource.schemaVersion || 0) < 8) {
+    project.documents.cg.templateHtml = defaults.documents.cg.templateHtml;
+  }
+
+  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 8) {
     saveAssemblyProject(project, storage);
   }
 
