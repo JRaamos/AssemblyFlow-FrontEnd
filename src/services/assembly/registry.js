@@ -78,3 +78,12 @@ export const DASHBOARD_MENU_ITEMS = [
   { label: "Início", path: "dashboard" },
   ...DOCUMENT_REGISTRY.map(({ menuLabel, route }) => ({ label: menuLabel, path: route })),
 ];
+
+const PART_B_MENU_PATHS = new Set(
+  DOCUMENT_REGISTRY.filter(({ part }) => part === "B").map(({ route }) => route)
+);
+
+export const getDashboardMenuItems = (circuitMode = "single") =>
+  circuitMode === "single"
+    ? DASHBOARD_MENU_ITEMS.filter(({ path }) => !PART_B_MENU_PATHS.has(path))
+    : DASHBOARD_MENU_ITEMS;

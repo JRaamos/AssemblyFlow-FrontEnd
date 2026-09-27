@@ -8,6 +8,7 @@ import {
 import { DOCUMENT_REGISTRY } from "./registry";
 
 export const ASSEMBLY_PROJECT_STORAGE_KEY = "assemblyflow:project:v3";
+export const ASSEMBLY_PROJECT_UPDATED_EVENT = "assemblyflow:project-updated";
 const PREVIOUS_PROJECT_STORAGE_KEY = "assemblyflow:project:v2";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
@@ -138,6 +139,12 @@ export const saveAssemblyProject = (nextProject, storage) => {
       safeWrite(storage, storageKey, JSON.stringify(nextProject.documents[id]));
     }
   });
+
+  if (!storage && typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(ASSEMBLY_PROJECT_UPDATED_EVENT, { detail: nextProject })
+    );
+  }
 
   return nextProject;
 };

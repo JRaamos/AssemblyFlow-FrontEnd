@@ -15,13 +15,15 @@ import {
 } from "./styled";
 
 import { useNavigate } from 'react-router-dom';
-import { DASHBOARD_MENU_ITEMS } from "services/assembly/registry";
+import useAssemblyProject from "hooks/useAssemblyProject";
+import { getDashboardMenuItems } from "services/assembly/registry";
 
 
 
 export default function DashboardSide({ setLess, less }) {
 
     const location = useLocation();
+    const { project } = useAssemblyProject();
 
     const n = useNavigate();
     const navigate = to => n(`/${to}`);
@@ -31,7 +33,7 @@ export default function DashboardSide({ setLess, less }) {
         }
     };
 
-    const menuOptions = DASHBOARD_MENU_ITEMS;
+    const menuOptions = getDashboardMenuItems(project.settings?.circuitMode);
 
 
     const currentPath = location.pathname.replace(/^\/+|\/+$/g, "");

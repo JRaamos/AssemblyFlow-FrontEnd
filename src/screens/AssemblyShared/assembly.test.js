@@ -4,7 +4,11 @@ import {
   updateLinkedAssignment,
 } from "services/assembly/assignments";
 import { cloneAssemblyProject, defaultAssemblyProject } from "services/assembly/defaults";
-import { DASHBOARD_MENU_ITEMS, DOCUMENT_REGISTRY } from "services/assembly/registry";
+import {
+  DASHBOARD_MENU_ITEMS,
+  DOCUMENT_REGISTRY,
+  getDashboardMenuItems,
+} from "services/assembly/registry";
 import { recalculateProgram, reorderRows, toggleIntervalRow } from "services/assembly/program";
 import {
   getDocumentStorageKey,
@@ -71,6 +75,24 @@ it("reorders rows and keeps registry routes unique", () => {
   const routes = DOCUMENT_REGISTRY.map((item) => item.route);
   expect(new Set(routes).size).to.equal(routes.length);
   expect(DASHBOARD_MENU_ITEMS.length).to.be.greaterThan(5);
+});
+
+it("hides Part B navigation only while Circuito Único is active", () => {
+  const singlePaths = getDashboardMenuItems("single").map(({ path }) => path);
+  const partsPaths = getDashboardMenuItems("parts").map(({ path }) => path);
+
+  expect(singlePaths).not.to.include.members([
+    "discb-co",
+    "pr-or-b-co",
+    "discb-br",
+    "pr-or-b-br",
+  ]);
+  expect(partsPaths).to.include.members([
+    "discb-co",
+    "pr-or-b-co",
+    "discb-br",
+    "pr-or-b-br",
+  ]);
 });
 
 it("keeps T-T and T-T-br as different official documents", () => {
