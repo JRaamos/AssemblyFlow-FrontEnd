@@ -80,7 +80,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 9,
+  schemaVersion: 12,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -145,7 +145,13 @@ export const loadAssemblyProject = (storage) => {
     project.documents.cg.meta.eventVariant = "br";
   }
 
-  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 9) {
+  if ((metadataSource.schemaVersion || 0) < 12) {
+    ["disc-pio", "disc-co", "discb-co", "disc-br", "discb-br"].forEach((id) => {
+      project.documents[id].templateHtml = defaults.documents[id].templateHtml;
+    });
+  }
+
+  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 12) {
     saveAssemblyProject(project, storage);
   }
 

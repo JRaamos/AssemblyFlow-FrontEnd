@@ -1,24 +1,31 @@
 const ALLOWED_TAGS = new Set([
   "A",
+  "ARTICLE",
   "B",
   "BLOCKQUOTE",
   "BR",
   "DD",
+  "DIV",
+  "DL",
   "DT",
   "EM",
+  "FOOTER",
   "H1",
   "H2",
   "H3",
+  "HEADER",
   "I",
   "LI",
   "OL",
   "P",
+  "SECTION",
   "STRONG",
   "U",
   "UL",
 ]);
 
 const ALIGNMENT_CLASS = /^ql-align-(center|right|justify)$/;
+const DOCUMENT_CLASS = /^(document-(letterhead|date|recipient|facts|outline-note|section|signature|rehearsal-details|rehearsal-note)|keep-together|pioneer-assignment|pioneer-guidance)$/;
 
 const fallbackSanitize = (html = "") =>
   String(html)
@@ -43,7 +50,10 @@ export const sanitizeDocumentHtml = (html = "") => {
     const sourceHref = element.getAttribute("href") || "";
     [...element.attributes].forEach((attribute) => element.removeAttribute(attribute.name));
 
-    if (ALIGNMENT_CLASS.test(sourceClass)) element.setAttribute("class", sourceClass);
+    const safeClasses = sourceClass
+      .split(/\s+/)
+      .filter((className) => ALIGNMENT_CLASS.test(className) || DOCUMENT_CLASS.test(className));
+    if (safeClasses.length) element.setAttribute("class", safeClasses.join(" "));
 
     if (element.tagName === "A") {
       if (/^(https?:|mailto:)/i.test(sourceHref)) {

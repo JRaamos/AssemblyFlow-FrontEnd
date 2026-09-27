@@ -123,6 +123,16 @@ export const PreviewContent = styled.article`
     text-align: center;
   }
 
+  .document-rehearsal-details {
+    margin: 10px 0;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .document-rehearsal-details p {
+    margin-bottom: 2px;
+  }
+
   .document-section {
     break-inside: auto;
   }

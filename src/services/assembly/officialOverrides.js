@@ -32,7 +32,7 @@ const timedProgramRow = (
   hideTime,
 });
 
-const discourseReminders = `
+const discourseReminders = (eventPath) => `
   <section class="document-section keep-together">
     <h2>LEMBRETES</h2>
     <p><strong>1) APRESENTAÇÃO:</strong> No dia da designação, comparecer na presidência uma hora antes do início do programa. Também apresente-se 30 min antes do seu discurso ao presidente de sessão, junto com os que participarão em sua parte.</p>
@@ -40,7 +40,7 @@ const discourseReminders = `
   <section class="document-section">
     <p><strong>2) PREPARAÇÃO:</strong> Reserve tempo suficiente para preparar-se bem; não deixe para a última hora. A preparação é especialmente importante quando há entrevistas ou demonstrações. As entrevistas devem ser naturais, realistas e práticas, e devem ser apresentadas de modo conversante. Sempre mantenha a dignidade cristã. Algumas entrevistas parecem monótonas, artificiais ou formais porque os entrevistados se esforçam para fazer uma apresentação decorada, ou leem suas experiências. O entrevistador deve ter em mente o que deseja que os entrevistados relatem e fazer-lhes perguntas apropriadas para que seus comentários sejam naturais e espontâneos. Só se consegue isso com boa preparação e ensaios.</p>
     <p>Vivemos em “tempos críticos”. (2 Tim. 3:1) Muitos de nossos irmãos enfrentam severas pressões e testes de fé. Eles vão aos congressos e assembleias para serem espiritualmente revigorados e fortalecidos. A boa preparação e a apresentação eficaz de sua parte podem contribuir muito para encorajá-los.</p>
-    <p>Siga de perto a matéria e o desenrolar das ideias, visando salientar o tema e os pontos principais. Não é necessário usar todos os pormenores da matéria, apenas o que for pertinente à sua parte. Dê tempo suficiente para que a assistência encontre os textos e acompanhe a explicação e a aplicação. Pode-se também desenvolver e enriquecer o esboço com argumentos e ilustrações, mas sem interferir nos pontos principais e dentro do tempo concedido. Não introduza matéria secular ou ideias pessoais. Evite ilustrações questionáveis, dramáticas ou ofensivas. Explique, raciocine sobre os textos e mostre como se aplicam.</p>
+    <p>Siga de perto a matéria e o desenrolar das ideias, visando salientar o tema e os pontos principais. Não é necessário usar todos os pormenores da matéria, apenas o que for pertinente à sua parte. Dê tempo suficiente para que a assistência encontre os textos e acompanhe a explicação e a aplicação. Pode-se também desenvolver e enriquecer o esboço com argumentos, ilustrações, etc., mas deve-se tomar cuidado para não interferir nos pontos principais e dentro do tempo concedido. Não se deve introduzir matéria secular ou ideias pessoais. Evite ilustrações questionáveis, dramáticas ou ofensivas. Não é necessário ler todos os textos. Deve-se dar atenção especial àqueles que servem de base para os pontos que devem ser enfatizados. Deve-se explicar, raciocinar sobre os textos e mostrar como se aplicam. A preparação cabal é essencial para tornar sua parte entusiástica e motivadora. Por isso, seria muito proveitoso analisar as informações contidas em “Escola do Ministério”, páginas 56-61 (Habilidade de ensinar), 174-8 (Espontâneo) e 258-62 (Tocar o coração).</p>
   </section>
   <section class="document-section keep-together">
     <p><strong>3) MODO DE FALAR:</strong> Fale de modo espontâneo, claro, entusiástico, com convicção e bom volume. Não tente memorizar as palavras nem use notas muito detalhadas. Concentre-se nas ideias, não em palavras. Não transforme seu esboço num manuscrito.</p>
@@ -48,9 +48,16 @@ const discourseReminders = `
     <p><strong>5) ENTREVISTAS, MONÓLOGOS E DEMONSTRAÇÕES:</strong> Se sua parte incluí-los, observe as orientações abaixo.</p>
   </section>
   <section class="document-section">
-    <p><strong>a) ESCOLHA DOS PARTICIPANTES E VESTIMENTA:</strong> Devem ser usados apenas publicadores batizados que sejam exemplares em todos os sentidos. Verifique primeiro com a Comissão de Serviço da congregação se os possíveis participantes são exemplares. Escolha apenas aqueles cuja presença no palco contribuirá de forma positiva para o programa. Relembre aos participantes os princípios da modéstia e do bom juízo no vestuário e na aparência.</p>
-    <p><strong>b) ENSAIO:</strong> Realize os ensaios com a devida antecedência. Não deixe para a última hora. Entregue o quanto antes as informações que os participantes necessitam.</p>
-    <p><strong>c) ENTREVISTAS:</strong> Evite perguntas que exijam respostas longas. Faça mais perguntas para obter respostas curtas. Em geral, cada resposta não deve demorar mais do que 30 a 60 segundos. O entrevistado deve falar olhando para o orador. As expressões devem ser espontâneas e cativantes.</p>
+    <p><strong>a) ESCOLHA DOS PARTICIPANTES E VESTIMENTA:</strong> Devem ser usados apenas publicadores batizados que sejam exemplares em todos os sentidos. Quando a designação envolve a participação de crianças, é bom que sejam batizadas. Em todos os casos, verifique primeiro com a Comissão de Serviço da congregação se os possíveis participantes são exemplares. Se for difícil encontrar participantes que se encaixem nas instruções de determinada parte, contate o superintendente de circuito. Não se devem usar pessoas que poderiam suscitar dúvidas na mente de alguns na assistência por terem sido repreendidas, desassociadas ou tido conduta questionável no passado. Não use pessoas com reputação de vestimenta imodesta ou que usem estilos de roupa e de cabelo que podem ser encarados por outros como extremistas ou muito na moda. Surgem problemas quando os irmãos não usam de bom critério ao selecionar os participantes. Portanto, escolha apenas aqueles cuja presença no palco contribuirá de forma positiva para o programa. Utilize apenas irmãos cuja vida seja coerente com o que será dito no programa. Se possível, evite usar irmãos que já farão outras partes na assembleia. Se tiver dificuldades em encontrar irmãos, pode consultar o superintendente de circuito. Relembre aos participantes os princípios da modéstia e do bom juízo no que tange ao vestuário e à aparência. (Queiram ver Despertai! 08/02/99 pp. 16-19.)</p>
+    <p><strong>b) ENSAIO:</strong> Realize vários ensaios e com a devida antecedência. Não deixe para a última hora. Entregue o quanto antes as informações que os participantes necessitam. O local e a hora do ensaio das partes com entrevistas e demonstrações serão:</p>
+  </section>
+  <div class="document-rehearsal-details keep-together">
+    <p>{{event.${eventPath}.rehearsalDateTime}}</p>
+    <p>{{event.${eventPath}.rehearsalVenue}}</p>
+    <p>{{event.${eventPath}.rehearsalAddress}}</p>
+  </div>
+  <section class="document-section">
+    <p><strong>c) ENTREVISTAS:</strong> Evite perguntas que exijam respostas longas. Faça mais perguntas para obter respostas curtas. Em geral, a resposta a cada pergunta não deve demorar mais do que 30 a 60 segundos. O entrevistado deve falar olhando para o orador e não para a assistência. Não se deve pedir ao entrevistado que dê recomendações, conselhos ou sugestões à assistência. Seria melhor que o entrevistado não lesse e nem decorasse suas respostas. As expressões devem ser espontâneas e cativantes. Também não é necessário iniciar cada resposta citando o nome do orador.</p>
     <p>Torne sua apresentação assunto de oração a Jeová e estamos certos de que Ele abençoará seus esforços.</p>
   </section>
 `;
@@ -75,7 +82,7 @@ const discourseTemplate = (eventPath) => `
     <div><dt>TEMA DO DISCURSO:</dt><dd><strong><em>{{record.title}}</em></strong></dd></div>
   </dl>
   <p class="document-outline-note"><strong>Veja esboço, em anexo.</strong></p>
-  ${discourseReminders}
+  ${discourseReminders(eventPath)}
   <footer class="document-signature keep-together">
     <p>Seu irmão,</p>
     <p><strong><em>{{traveler.name}} / {{traveler.circuitNumber}}</em></strong></p>

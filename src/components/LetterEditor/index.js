@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useRef } from 'react'
 import { useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css'
 import styled from 'styled-components'
@@ -54,9 +54,39 @@ const EditorContainer = styled.div`
   .ql-toolbar .ql-active {
     background: #e0e7ff;
   }
+
+  .structured-editor {
+    min-height: 260px;
+    padding: 18px;
+    overflow-y: auto;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    outline: none;
+  }
+
+  .structured-editor p {
+    margin: 0 0 10px;
+  }
+
+  .structured-editor .document-facts > div {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.8fr) minmax(0, 1.2fr);
+    gap: 12px;
+  }
+
+  .structured-editor .document-facts dt {
+    color: #155eaa;
+    font-weight: 700;
+  }
+
+  .structured-editor .document-facts dd {
+    margin: 0;
+  }
 `
 
-export default function LetterEditor({
+function QuillLetterEditor({
   value,
   onChange,
   placeholder = 'Escreva aqui...'
@@ -117,4 +147,32 @@ export default function LetterEditor({
       <div ref={quillRef} />
     </EditorContainer>
   )
+}
+
+function StructuredLetterEditor({ value, onChange }) {
+  const editorRef = useRef(null)
+
+  useEffect(() => {
+    const editor = editorRef.current
+    const sanitizedValue = sanitizeDocumentHtml(value || '')
+    if (editor && editor.innerHTML !== sanitizedValue) editor.innerHTML = sanitizedValue
+  }, [value])
+
+  return (
+    <EditorContainer>
+      <div
+        ref={editorRef}
+        className="structured-editor"
+        contentEditable
+        suppressContentEditableWarning
+        onInput={(event) => onChange?.(sanitizeDocumentHtml(event.currentTarget.innerHTML))}
+      />
+    </EditorContainer>
+  )
+}
+
+export default function LetterEditor({ preserveStructure = false, ...props }) {
+  return preserveStructure
+    ? <StructuredLetterEditor {...props} />
+    : <QuillLetterEditor {...props} />
 }

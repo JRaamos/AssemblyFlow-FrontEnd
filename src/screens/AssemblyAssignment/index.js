@@ -11,7 +11,8 @@ import {
 } from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentPreview } from "services/assembly/templates";
-import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
+import { createAssignmentLetterPdf } from "utils/assignmentLetterPdf";
+import { downloadAsPDF, savePdf, sanitizeWindowsFileName } from "utils/downloads";
 import { ButtonContainer, FormSpacer } from "ui/styled";
 
 import {
@@ -98,16 +99,17 @@ export default function AssemblyAssignment({ documentId }) {
 
   const handleDownload = async () => {
     setExportStatus("Gerando PDF...");
-    const event = project.events[registry.variant]?.[assignmentView.activePart];
-    const fileName = buildDocumentFileName({
-      documentId: assignmentView.assignmentDocumentId,
-      speaker: currentRecord?.speaker,
-      date: event?.date,
-      part: circuitMode === "parts" && assignmentView.supportsParts
-        ? assignmentView.activePart === "partA" ? "parte-a" : "parte-b"
-        : "unico",
-    });
-    const success = await downloadAsPDF(`print-${documentId}`, fileName);
+    const printNode = document.getElementById(`print-${documentId}`);
+    const fileName = sanitizeWindowsFileName(currentRecord?.speaker || "Carta de designação");
+    let success = false;
+
+    try {
+      success = ["discourse", "pioneer"].includes(assignmentView.kind)
+        ? savePdf(createAssignmentLetterPdf(printNode), fileName)
+        : await downloadAsPDF(`print-${documentId}`, fileName);
+    } catch (error) {
+      console.error("downloadAssignmentPDF", error);
+    }
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
   };
 
@@ -233,7 +235,11 @@ export default function AssemblyAssignment({ documentId }) {
           </TableWrap>
           <ScreenCard>
             <SmallLabel>Modelo base</SmallLabel>
-            <LetterEditor value={assemblyDocument.templateHtml} onChange={updateTemplate} />
+            <LetterEditor
+              preserveStructure
+              value={assemblyDocument.templateHtml}
+              onChange={updateTemplate}
+            />
           </ScreenCard>
         </div>
         <PreviewCard id={`print-${documentId}`}>

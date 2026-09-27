@@ -21,6 +21,8 @@ import {
   createPdfFromElement,
   sanitizeWindowsFileName,
 } from "utils/downloads";
+import { createAssignmentLetterPdf } from "utils/assignmentLetterPdf";
+import { sanitizeDocumentHtml } from "services/assembly/sanitize";
 import { createAssemblyProgramPdf } from "utils/programPdf";
 import { createPioneerProgramPdf } from "utils/pioneerProgramPdf";
 
@@ -358,6 +360,57 @@ it("creates predictable Windows-safe PDF file names", () => {
       date: "06 de dezembro de 2026",
     })
   ).to.equal("disc-br_Josmar_2026-12-06");
+  expect(sanitizeWindowsFileName("Ronivaldo S. Ramos")).to.equal("Ronivaldo_S._Ramos");
+});
+
+it("preserves the safe document structure used by previews and PDF export", () => {
+  const sanitized = sanitizeDocumentHtml(`
+    <header class="document-letterhead keep-together" onclick="bad()">
+      <p class="document-date">19 de setembro de 2026</p>
+    </header>
+    <dl class="document-facts"><div><dt>TEMA:</dt><dd>Exemplo</dd></div></dl>
+    <script>bad()</script>
+  `);
+
+  expect(sanitized).to.contain('class="document-letterhead keep-together"');
+  expect(sanitized).to.contain('class="document-date"');
+  expect(sanitized).to.contain('class="document-facts"');
+  expect(sanitized).not.to.contain("onclick");
+  expect(sanitized).not.to.contain("script");
+});
+
+it("creates an Excel-style assignment letter without a project footer", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const view = getAssignmentView(project, "disc-br", "partA");
+  const recordIndex = view.records.findIndex(({ speaker }) => speaker === "Josmar");
+  const preview = buildDocumentPreview("disc-br", project, { recordIndex });
+  const printRoot = document.createElement("article");
+  printRoot.innerHTML = preview.html;
+
+  const pdf = createAssignmentLetterPdf(printRoot);
+  const rawPdf = pdf.output();
+  const base64 = pdf.output("datauristring").split(",")[1];
+  cy.writeFile("cypress/downloads/Josmar.pdf", base64, "base64");
+
+  expect(pdf.getNumberOfPages()).to.equal(1);
+  expect(rawPdf).not.to.contain("AssemblyFlow");
+  expect(preview.html).to.contain("TEMA DO EVENTO:");
+  expect(preview.html).to.contain(project.events.br.partA.rehearsalDateTime);
+});
+
+it("uses the same one-page PDF standard for pioneer assignments", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const preview = buildDocumentPreview("disc-pio", project, { recordIndex: 0 });
+  const printRoot = document.createElement("article");
+  printRoot.innerHTML = preview.html;
+
+  const pdf = createAssignmentLetterPdf(printRoot);
+  const base64 = pdf.output("datauristring").split(",")[1];
+  cy.writeFile("cypress/downloads/Pioneiro.pdf", base64, "base64");
+
+  expect(pdf.getNumberOfPages()).to.equal(1);
+  expect(pdf.output()).not.to.contain("AssemblyFlow");
+  expect(preview.html).to.contain("ORIENTAÇÕES GERAIS:");
 });
 
 it("creates a real A4 PDF with selectable text", () => {

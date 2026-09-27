@@ -190,23 +190,6 @@ const renderTableBlock = (pdf, block, cursor, page) => {
   cursor.y += 3;
 };
 
-const addPageFooters = (pdf) => {
-  const totalPages = pdf.getNumberOfPages();
-
-  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
-    pdf.setPage(pageNumber);
-    pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(7.5);
-    pdf.setTextColor(100, 116, 139);
-    pdf.text(
-      `AssemblyFlow • ${pageNumber}/${totalPages}`,
-      194,
-      289,
-      { align: "right" }
-    );
-  }
-};
-
 export const createPdfFromElement = (node) => {
   const clone = makePrintableClone(node);
     const blocks = collectTextBlocks(clone);
@@ -219,8 +202,12 @@ export const createPdfFromElement = (node) => {
       else renderTextBlock(pdf, block, cursor, page);
     });
 
-    addPageFooters(pdf);
     return pdf;
+};
+
+export const savePdf = (pdf, fileName) => {
+  pdf.save(`${sanitizeWindowsFileName(fileName)}.pdf`);
+  return true;
 };
 
 export const downloadAsPDF = async (target, fileName) => {
@@ -231,9 +218,7 @@ export const downloadAsPDF = async (target, fileName) => {
   }
 
   try {
-    const pdf = createPdfFromElement(node);
-    pdf.save(`${sanitizeWindowsFileName(fileName)}.pdf`);
-    return true;
+    return savePdf(createPdfFromElement(node), fileName);
   } catch (error) {
     console.error("downloadAsPDF", error);
     return false;
