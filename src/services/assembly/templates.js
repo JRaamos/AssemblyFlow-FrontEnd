@@ -20,6 +20,12 @@ export const normalizeGeneralLetterEventFields = (template = "") =>
     (_, field) => `{{letterEvent.${field}}}`
   );
 
+export const normalizeDonationsLetterTitle = (template = "") =>
+  String(template).replace(
+    /<h1(?:\s[^>]*)?>\s*ADMINISTRAÇÃO DA ASSEMBLEIA\s*<\/h1>/gi,
+    "<p><strong>ADMINISTRAÇÃO DA ASSEMBLEIA</strong></p>"
+  );
+
 export const buildDocumentPreview = (documentId, projectState, options = {}) => {
   const registry = DOCUMENT_REGISTRY_BY_ID[documentId];
   const document = projectState?.documents?.[documentId];
@@ -36,9 +42,10 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
   if (registry.kind === "letter") {
     const eventVariant = document.meta?.eventVariant === "co" ? "co" : "br";
     const letterEvent = projectState.events?.[eventVariant]?.partA || {};
-    const templateHtml =
-      documentId === "cg"
-        ? normalizeGeneralLetterEventFields(document.templateHtml)
+    const templateHtml = documentId === "cg"
+      ? normalizeGeneralLetterEventFields(document.templateHtml)
+      : documentId === "dm"
+        ? normalizeDonationsLetterTitle(document.templateHtml)
         : document.templateHtml;
 
     return {

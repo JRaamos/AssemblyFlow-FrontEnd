@@ -6,7 +6,10 @@ import {
   defaultAssemblyProject,
 } from "./defaults";
 import { DOCUMENT_REGISTRY } from "./registry";
-import { normalizeGeneralLetterEventFields } from "./templates";
+import {
+  normalizeDonationsLetterTitle,
+  normalizeGeneralLetterEventFields,
+} from "./templates";
 
 export const ASSEMBLY_PROJECT_STORAGE_KEY = "assemblyflow:project:v3";
 export const ASSEMBLY_PROJECT_UPDATED_EVENT = "assemblyflow:project-updated";
@@ -81,7 +84,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 13,
+  schemaVersion: 14,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -124,6 +127,13 @@ export const loadAssemblyProject = (storage) => {
   const generalLetterFieldsWereNormalized =
     project.documents.cg.templateHtml !== savedGeneralLetterTemplate;
 
+  const savedDonationsLetterTemplate = project.documents.dm.templateHtml;
+  project.documents.dm.templateHtml = normalizeDonationsLetterTitle(
+    savedDonationsLetterTemplate
+  );
+  const donationsLetterTitleWasNormalized =
+    project.documents.dm.templateHtml !== savedDonationsLetterTemplate;
+
   if ((metadataSource.schemaVersion || 0) < 4) {
     project.settings.circuitMode = "single";
   }
@@ -162,8 +172,9 @@ export const loadAssemblyProject = (storage) => {
   if (
     !savedMetadata ||
     !hasVersionedDocument ||
-    (metadataSource.schemaVersion || 0) < 13 ||
-    generalLetterFieldsWereNormalized
+    (metadataSource.schemaVersion || 0) < 14 ||
+    generalLetterFieldsWereNormalized ||
+    donationsLetterTitleWasNormalized
   ) {
     saveAssemblyProject(project, storage);
   }

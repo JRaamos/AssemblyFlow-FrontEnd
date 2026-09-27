@@ -225,7 +225,7 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
     meta: { letterDate: "19 de setembro de 2026" },
     templateHtml: `
       <header class="document-letterhead"><p><strong><em>{{traveler.name}} / {{traveler.circuitNumber}} / {{traveler.phone}} / {{traveler.email}}</em></strong></p><p class="document-date">{{documentMeta.letterDate}}</p></header>
-      <h1>ADMINISTRAÇÃO DA ASSEMBLEIA</h1>
+      <p><strong>ADMINISTRAÇÃO DA ASSEMBLEIA</strong></p>
       <p><strong>A TODOS OS CORPOS DE ANCIÃOS</strong></p>
       <p>Prezados irmãos: <span style="float:right">Ref.: Donativos para as despesas da assembleia.</span></p>
       <p>Escrevemo-lhes para agradecer-lhes por seus donativos voluntários para o pagamento das despesas de nossa última assembleia. Apreciamos muito que os corpos de anciãos seguiram o arranjo de adotar uma resolução para a congregação contribuir para a realização de nossas assembleias.</p>

@@ -113,6 +113,40 @@ it("normalizes a saved general letter without replacing its edited content", () 
   expect(migrated.documents.cg.templateHtml).not.to.contain("event.br.partA");
 });
 
+it("keeps the donations letter heading at the normal body size", () => {
+  const storage = createMemoryStorage();
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  project.documents.dm.templateHtml = `
+    <h1>ADMINISTRAÇÃO DA ASSEMBLEIA</h1>
+    <p>Conteúdo personalizado da carta.</p>
+  `;
+
+  storage.setItem(
+    ASSEMBLY_PROJECT_STORAGE_KEY,
+    JSON.stringify({
+      settings: project.settings,
+      traveler: project.traveler,
+      events: project.events,
+      circuitComposition: project.circuitComposition,
+      schemaVersion: 14,
+    })
+  );
+  storage.setItem(
+    getDocumentStorageKey("dm"),
+    JSON.stringify(project.documents.dm)
+  );
+
+  const migrated = loadAssemblyProject(storage);
+  const preview = buildDocumentPreview("dm", migrated);
+  expect(migrated.documents.dm.templateHtml).to.contain(
+    "<p><strong>ADMINISTRAÇÃO DA ASSEMBLEIA</strong></p>"
+  );
+  expect(migrated.documents.dm.templateHtml).to.contain(
+    "Conteúdo personalizado da carta."
+  );
+  expect(preview.html).not.to.contain("<h1>");
+});
+
 it("uses the requested default theme for each assembly everywhere", () => {
   const project = cloneAssemblyProject(defaultAssemblyProject);
   const expected = {
