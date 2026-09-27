@@ -43,7 +43,7 @@ jobs:
         run: pnpm desktop:verify
 
       - name: Build unsigned Windows x64 installer
-        run: pnpm exec electron-builder --win nsis --x64
+        run: pnpm exec electron-builder --win nsis --x64 --publish never
 
       - name: Record installer metadata
         shell: pwsh

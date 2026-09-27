@@ -22,8 +22,8 @@
         "desktop:dev": "concurrently --kill-others --success first \"pnpm dev:server\" \"wait-on http://127.0.0.1:3100 && cross-env ASSEMBLYFLOW_DEV_URL=http://127.0.0.1:3100 electron .\"",
         "desktop:verify": "node scripts/verify-desktop-build.mjs",
         "desktop:pack": "pnpm build && electron-builder --dir",
-        "desktop:dist": "pnpm build && electron-builder",
-        "desktop:win": "pnpm build && electron-builder --win nsis --x64"
+        "desktop:dist": "pnpm build && electron-builder --publish never",
+        "desktop:win": "pnpm build && electron-builder --win nsis --x64 --publish never"
     },
     "devDependencies": {
         "@ckeditor/ckeditor5-react": "^11.0.0",
