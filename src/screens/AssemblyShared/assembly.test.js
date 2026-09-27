@@ -21,7 +21,7 @@ import {
   createPdfFromElement,
   sanitizeWindowsFileName,
 } from "utils/downloads";
-import { createAssignmentLetterPdf } from "utils/assignmentLetterPdf";
+import { createPdfFromPreviewCanvas } from "utils/previewPdf";
 import { sanitizeDocumentHtml } from "services/assembly/sanitize";
 import { createAssemblyProgramPdf } from "utils/programPdf";
 import { createPioneerProgramPdf } from "utils/pioneerProgramPdf";
@@ -366,7 +366,7 @@ it("creates predictable Windows-safe PDF file names", () => {
 it("preserves the safe document structure used by previews and PDF export", () => {
   const sanitized = sanitizeDocumentHtml(`
     <header class="document-letterhead keep-together" onclick="bad()">
-      <p class="document-date">19 de setembro de 2026</p>
+      <p class="document-date"><span class="text-size-large ql-size-large">19 de setembro de 2026</span></p>
     </header>
     <dl class="document-facts"><div><dt>TEMA:</dt><dd>Exemplo</dd></div></dl>
     <script>bad()</script>
@@ -375,6 +375,8 @@ it("preserves the safe document structure used by previews and PDF export", () =
   expect(sanitized).to.contain('class="document-letterhead keep-together"');
   expect(sanitized).to.contain('class="document-date"');
   expect(sanitized).to.contain('class="document-facts"');
+  expect(sanitized).to.contain("text-size-large");
+  expect(sanitized).to.contain("ql-size-large");
   expect(sanitized).not.to.contain("onclick");
   expect(sanitized).not.to.contain("script");
 });
@@ -384,13 +386,17 @@ it("creates an Excel-style assignment letter without a project footer", () => {
   const view = getAssignmentView(project, "disc-br", "partA");
   const recordIndex = view.records.findIndex(({ speaker }) => speaker === "Josmar");
   const preview = buildDocumentPreview("disc-br", project, { recordIndex });
-  const printRoot = document.createElement("article");
-  printRoot.innerHTML = preview.html;
+  const canvas = document.createElement("canvas");
+  canvas.width = 794;
+  canvas.height = 1123;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "#172033";
+  context.fillText("Prévia fiel", 40, 40);
 
-  const pdf = createAssignmentLetterPdf(printRoot);
+  const pdf = createPdfFromPreviewCanvas(canvas);
   const rawPdf = pdf.output();
-  const base64 = pdf.output("datauristring").split(",")[1];
-  cy.writeFile("cypress/downloads/Josmar.pdf", base64, "base64");
 
   expect(pdf.getNumberOfPages()).to.equal(1);
   expect(rawPdf).not.to.contain("AssemblyFlow");
@@ -401,12 +407,14 @@ it("creates an Excel-style assignment letter without a project footer", () => {
 it("uses the same one-page PDF standard for pioneer assignments", () => {
   const project = cloneAssemblyProject(defaultAssemblyProject);
   const preview = buildDocumentPreview("disc-pio", project, { recordIndex: 0 });
-  const printRoot = document.createElement("article");
-  printRoot.innerHTML = preview.html;
+  const canvas = document.createElement("canvas");
+  canvas.width = 794;
+  canvas.height = 1123;
+  const context = canvas.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
 
-  const pdf = createAssignmentLetterPdf(printRoot);
-  const base64 = pdf.output("datauristring").split(",")[1];
-  cy.writeFile("cypress/downloads/Pioneiro.pdf", base64, "base64");
+  const pdf = createPdfFromPreviewCanvas(canvas);
 
   expect(pdf.getNumberOfPages()).to.equal(1);
   expect(pdf.output()).not.to.contain("AssemblyFlow");

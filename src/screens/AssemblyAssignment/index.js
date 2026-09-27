@@ -11,8 +11,8 @@ import {
 } from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentPreview } from "services/assembly/templates";
-import { createAssignmentLetterPdf } from "utils/assignmentLetterPdf";
-import { downloadAsPDF, savePdf, sanitizeWindowsFileName } from "utils/downloads";
+import { createPreviewPdf } from "utils/previewPdf";
+import { savePdf, sanitizeWindowsFileName } from "utils/downloads";
 import { ButtonContainer, FormSpacer } from "ui/styled";
 
 import {
@@ -104,9 +104,7 @@ export default function AssemblyAssignment({ documentId }) {
     let success = false;
 
     try {
-      success = ["discourse", "pioneer"].includes(assignmentView.kind)
-        ? savePdf(createAssignmentLetterPdf(printNode), fileName)
-        : await downloadAsPDF(`print-${documentId}`, fileName);
+      success = savePdf(await createPreviewPdf(printNode), fileName);
     } catch (error) {
       console.error("downloadAssignmentPDF", error);
     }
@@ -242,9 +240,13 @@ export default function AssemblyAssignment({ documentId }) {
             />
           </ScreenCard>
         </div>
-        <PreviewCard id={`print-${documentId}`}>
+        <PreviewCard>
           <SmallLabel data-pdf-exclude="true">Pré-visualização A4</SmallLabel>
-          <PreviewContent dangerouslySetInnerHTML={{ __html: preview.html }} />
+          <PreviewContent
+            id={`print-${documentId}`}
+            data-pdf-page="true"
+            dangerouslySetInnerHTML={{ __html: preview.html }}
+          />
         </PreviewCard>
       </TwoColumns>
 

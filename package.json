@@ -29,6 +29,7 @@
         "babel-runtime": "^6.26.0",
         "bootstrap": "^5.3.7",
         "crypto-js": "^4.2.0",
+        "html2canvas": "1.4.1",
         "i18n-js": "^4.5.1",
         "jspdf": "^3.0.1",
         "moment": "^2.30.1",

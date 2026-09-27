@@ -19,13 +19,16 @@ const ALLOWED_TAGS = new Set([
   "OL",
   "P",
   "SECTION",
+  "SPAN",
   "STRONG",
   "U",
   "UL",
 ]);
 
 const ALIGNMENT_CLASS = /^ql-align-(center|right|justify)$/;
+const QUILL_SIZE_CLASS = /^ql-size-(small|large|huge)$/;
 const DOCUMENT_CLASS = /^(document-(letterhead|date|recipient|facts|outline-note|section|signature|rehearsal-details|rehearsal-note)|keep-together|pioneer-assignment|pioneer-guidance)$/;
+const TEXT_STYLE_CLASS = /^text-size-(small|normal|large|huge)$/;
 
 const fallbackSanitize = (html = "") =>
   String(html)
@@ -52,7 +55,13 @@ export const sanitizeDocumentHtml = (html = "") => {
 
     const safeClasses = sourceClass
       .split(/\s+/)
-      .filter((className) => ALIGNMENT_CLASS.test(className) || DOCUMENT_CLASS.test(className));
+      .filter(
+        (className) =>
+          ALIGNMENT_CLASS.test(className) ||
+          QUILL_SIZE_CLASS.test(className) ||
+          DOCUMENT_CLASS.test(className) ||
+          TEXT_STYLE_CLASS.test(className)
+      );
     if (safeClasses.length) element.setAttribute("class", safeClasses.join(" "));
 
     if (element.tagName === "A") {

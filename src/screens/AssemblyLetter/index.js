@@ -6,7 +6,8 @@ import ContainerAuthenticated from "containers/Authenticated";
 import useAssemblyProject from "hooks/useAssemblyProject";
 import { buildDocumentPreview } from "services/assembly/templates";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
-import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
+import { buildDocumentFileName, savePdf } from "utils/downloads";
+import { createPreviewPdf } from "utils/previewPdf";
 import { ButtonContainer, FormSpacer } from "ui/styled";
 
 import {
@@ -72,7 +73,13 @@ export default function AssemblyLetter({ documentId }) {
       documentId,
       date: project.events[supportsAssemblyVariant ? activeVariant : registry.variant]?.partA?.date,
     });
-    const success = await downloadAsPDF(`print-${documentId}`, fileName);
+    let success = false;
+    try {
+      const printNode = document.getElementById(`print-${documentId}`);
+      success = savePdf(await createPreviewPdf(printNode), fileName);
+    } catch (error) {
+      console.error("downloadLetterPDF", error);
+    }
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
   };
 
@@ -113,8 +120,12 @@ export default function AssemblyLetter({ documentId }) {
         <ScreenCard>
           <LetterEditor value={document.templateHtml} onChange={handleChange} />
         </ScreenCard>
-        <PreviewCard id={`print-${documentId}`}>
-          <PreviewContent dangerouslySetInnerHTML={{ __html: preview.html }} />
+        <PreviewCard>
+          <PreviewContent
+            id={`print-${documentId}`}
+            data-pdf-page="true"
+            dangerouslySetInnerHTML={{ __html: preview.html }}
+          />
         </PreviewCard>
       </TwoColumns>
 

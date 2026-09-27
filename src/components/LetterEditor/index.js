@@ -66,6 +66,51 @@ const EditorContainer = styled.div`
     outline: none;
   }
 
+  .structured-toolbar {
+    display: flex;
+    position: sticky;
+    z-index: 10;
+    top: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+
+  .structured-toolbar button,
+  .structured-toolbar select {
+    min-width: 34px;
+    height: 32px;
+    padding: 0 9px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: #334155;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .structured-toolbar button:hover,
+  .structured-toolbar select:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+  }
+
+  .structured-toolbar select {
+    min-width: 128px;
+    border-color: #d7dee8;
+    background: #ffffff;
+  }
+
+  .toolbar-divider {
+    width: 1px;
+    height: 22px;
+    margin: 0 2px;
+    background: #d7dee8;
+  }
+
   .structured-editor p {
     margin: 0 0 10px;
   }
@@ -84,6 +129,11 @@ const EditorContainer = styled.div`
   .structured-editor .document-facts dd {
     margin: 0;
   }
+
+  .text-size-small { font-size: 0.85em; }
+  .text-size-normal { font-size: 1em; }
+  .text-size-large { font-size: 1.2em; }
+  .text-size-huge { font-size: 1.5em; }
 `
 
 function QuillLetterEditor({
@@ -95,6 +145,7 @@ function QuillLetterEditor({
     () => ({
       toolbar: [
         [{ header: [1, 2, 3, false] }],
+        [{ size: ['small', false, 'large', 'huge'] }],
         ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }],
         [{ align: [] }],
@@ -107,6 +158,7 @@ function QuillLetterEditor({
 
   const formats = [
     'header',
+    'size',
     'bold',
     'italic',
     'underline',
@@ -151,6 +203,69 @@ function QuillLetterEditor({
 
 function StructuredLetterEditor({ value, onChange }) {
   const editorRef = useRef(null)
+  const selectionRef = useRef(null)
+
+  const rememberSelection = () => {
+    const selection = window.getSelection()
+    if (!selection?.rangeCount || !editorRef.current?.contains(selection.anchorNode)) return
+    selectionRef.current = selection.getRangeAt(0).cloneRange()
+  }
+
+  const restoreSelection = () => {
+    const selection = window.getSelection()
+    if (!selection || !selectionRef.current) return
+    selection.removeAllRanges()
+    selection.addRange(selectionRef.current)
+  }
+
+  const normalizeMarkup = () => {
+    const editor = editorRef.current
+    if (!editor) return
+
+    editor.querySelectorAll('font[size]').forEach((font) => {
+      const sizeMap = {
+        1: 'small',
+        2: 'small',
+        3: 'normal',
+        4: 'large',
+        5: 'huge',
+        6: 'huge',
+        7: 'huge',
+      }
+      const replacement = document.createElement('span')
+      replacement.className = `text-size-${sizeMap[font.getAttribute('size')] || 'normal'}`
+      replacement.append(...font.childNodes)
+      font.replaceWith(replacement)
+    })
+
+    editor.querySelectorAll('[style]').forEach((element) => {
+      const alignment = element.style.textAlign
+      element.removeAttribute('style')
+      element.classList.remove('ql-align-center', 'ql-align-right', 'ql-align-justify')
+      if (['center', 'right', 'justify'].includes(alignment)) {
+        element.classList.add(`ql-align-${alignment}`)
+      }
+    })
+  }
+
+  const emitChange = () => {
+    normalizeMarkup()
+    const editor = editorRef.current
+    if (!editor) return
+    const sanitizedValue = sanitizeDocumentHtml(editor.innerHTML)
+    if (editor.innerHTML !== sanitizedValue) editor.innerHTML = sanitizedValue
+    onChange?.(sanitizedValue)
+    rememberSelection()
+  }
+
+  const runCommand = (command, commandValue = null) => {
+    editorRef.current?.focus()
+    restoreSelection()
+    document.execCommand(command, false, commandValue)
+    emitChange()
+  }
+
+  const preventToolbarBlur = (event) => event.preventDefault()
 
   useEffect(() => {
     const editor = editorRef.current
@@ -160,12 +275,39 @@ function StructuredLetterEditor({ value, onChange }) {
 
   return (
     <EditorContainer>
+      <div className="structured-toolbar" aria-label="Formatação do modelo base">
+        <select
+          aria-label="Tamanho da letra"
+          defaultValue="3"
+          onMouseDown={rememberSelection}
+          onChange={(event) => runCommand('fontSize', event.target.value)}
+        >
+          <option value="2">Pequena</option>
+          <option value="3">Normal</option>
+          <option value="4">Grande</option>
+          <option value="5">Muito grande</option>
+        </select>
+        <span className="toolbar-divider" />
+        <button type="button" aria-label="Negrito" title="Negrito" onMouseDown={preventToolbarBlur} onClick={() => runCommand('bold')}><strong>B</strong></button>
+        <button type="button" aria-label="Itálico" title="Itálico" onMouseDown={preventToolbarBlur} onClick={() => runCommand('italic')}><em>I</em></button>
+        <button type="button" aria-label="Sublinhado" title="Sublinhado" onMouseDown={preventToolbarBlur} onClick={() => runCommand('underline')}><u>U</u></button>
+        <span className="toolbar-divider" />
+        <button type="button" aria-label="Alinhar à esquerda" title="Alinhar à esquerda" onMouseDown={preventToolbarBlur} onClick={() => runCommand('justifyLeft')}>≡</button>
+        <button type="button" aria-label="Centralizar" title="Centralizar" onMouseDown={preventToolbarBlur} onClick={() => runCommand('justifyCenter')}>≣</button>
+        <button type="button" aria-label="Alinhar à direita" title="Alinhar à direita" onMouseDown={preventToolbarBlur} onClick={() => runCommand('justifyRight')}>≡</button>
+        <button type="button" aria-label="Justificar" title="Justificar" onMouseDown={preventToolbarBlur} onClick={() => runCommand('justifyFull')}>☰</button>
+        <span className="toolbar-divider" />
+        <button type="button" aria-label="Lista com marcadores" title="Lista com marcadores" onMouseDown={preventToolbarBlur} onClick={() => runCommand('insertUnorderedList')}>• Lista</button>
+        <button type="button" aria-label="Limpar formatação" title="Limpar formatação" onMouseDown={preventToolbarBlur} onClick={() => runCommand('removeFormat')}>Limpar</button>
+      </div>
       <div
         ref={editorRef}
         className="structured-editor"
         contentEditable
         suppressContentEditableWarning
-        onInput={(event) => onChange?.(sanitizeDocumentHtml(event.currentTarget.innerHTML))}
+        onInput={emitChange}
+        onKeyUp={rememberSelection}
+        onMouseUp={rememberSelection}
       />
     </EditorContainer>
   )

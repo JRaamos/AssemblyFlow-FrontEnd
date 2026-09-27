@@ -60,7 +60,7 @@ export const PreviewContent = styled.article`
   box-shadow: 0 12px 36px rgba(15, 23, 42, 0.12);
   color: #172033;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.46;
 
   h1,
@@ -72,7 +72,7 @@ export const PreviewContent = styled.article`
 
   h2 {
     margin-top: 18px;
-    font-size: 13px;
+    font-size: 13.5px;
     text-decoration: underline;
   }
 
@@ -144,7 +144,7 @@ export const PreviewContent = styled.article`
   }
 
   .pioneer-assignment {
-    font-size: 10.5px;
+    font-size: 11px;
     line-height: 1.32;
   }
 
@@ -167,8 +167,19 @@ export const PreviewContent = styled.article`
 
   .pioneer-assignment h2 {
     margin-top: 12px;
-    font-size: 11px;
+    font-size: 11.5px;
   }
+
+  .ql-align-center { text-align: center; }
+  .ql-align-right { text-align: right; }
+  .ql-align-justify { text-align: justify; }
+  .text-size-small { font-size: 0.85em; }
+  .text-size-normal { font-size: 1em; }
+  .text-size-large { font-size: 1.2em; }
+  .text-size-huge { font-size: 1.5em; }
+  .ql-size-small { font-size: 0.85em; }
+  .ql-size-large { font-size: 1.2em; }
+  .ql-size-huge { font-size: 1.5em; }
 
   table {
     width: 100%;
