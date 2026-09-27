@@ -3,39 +3,29 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { sanitizePdfName, toPdfBuffer } from "./pdf-utils.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PDF_SAVE_CHANNEL = "assemblyflow:save-pdf";
-const MAX_PDF_BYTES = 50 * 1024 * 1024;
 
 let mainWindow = null;
 
-const sanitizePdfName = (value = "documento.pdf") => {
-  const baseName = String(value)
-    .normalize("NFC")
-    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "-")
-    .replace(/\s+/g, "_")
-    .replace(/[. ]+$/g, "")
-    .replace(/\.pdf$/i, "")
-    .slice(0, 120) || "documento";
+const availableDownloadPath = async (fileName) => {
+  const parsed = path.parse(fileName);
+  const downloadsDirectory = app.getPath("downloads");
 
-  return `${baseName}.pdf`;
-};
-
-const toPdfBuffer = (bytes) => {
-  let buffer;
-  if (bytes instanceof ArrayBuffer) buffer = Buffer.from(bytes);
-  else if (ArrayBuffer.isView(bytes)) buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-  else if (Array.isArray(bytes)) buffer = Buffer.from(bytes);
-  else throw new Error("Conteúdo de PDF inválido.");
-
-  if (!buffer.length || buffer.length > MAX_PDF_BYTES) {
-    throw new Error("Tamanho de PDF inválido.");
+  for (let index = 0; index < 100; index += 1) {
+    const suffix = index ? `-${index + 1}` : "";
+    const candidate = path.join(downloadsDirectory, `${parsed.name}${suffix}${parsed.ext}`);
+    try {
+      await fs.access(candidate);
+    } catch {
+      return candidate;
+    }
   }
-  if (buffer.subarray(0, 5).toString("ascii") !== "%PDF-") {
-    throw new Error("O arquivo informado não é um PDF.");
-  }
-  return buffer;
+
+  return path.join(downloadsDirectory, `${parsed.name}-${Date.now()}${parsed.ext}`);
 };
 
 const registerPdfSaveHandler = () => {
@@ -44,23 +34,37 @@ const registerPdfSaveHandler = () => {
       throw new Error("Origem não autorizada.");
     }
 
-    const pdfBuffer = toPdfBuffer(payload.bytes);
+    const pdfBuffer = toPdfBuffer(payload);
     const fileName = sanitizePdfName(payload.fileName);
-    const result = await dialog.showSaveDialog(mainWindow, {
-      title: "Salvar PDF",
-      defaultPath: path.join(app.getPath("documents"), fileName),
-      buttonLabel: "Salvar",
-      filters: [{ name: "Documento PDF", extensions: ["pdf"] }],
-      properties: ["showOverwriteConfirmation"],
-    });
 
-    if (result.canceled || !result.filePath) return { saved: false, canceled: true };
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        title: "Salvar PDF",
+        defaultPath: path.join(app.getPath("documents"), fileName),
+        buttonLabel: "Salvar",
+        filters: [{ name: "Documento PDF", extensions: ["pdf"] }],
+        properties: ["showOverwriteConfirmation"],
+      });
 
-    const targetPath = result.filePath.toLocaleLowerCase().endsWith(".pdf")
-      ? result.filePath
-      : `${result.filePath}.pdf`;
-    await fs.writeFile(targetPath, pdfBuffer, { flag: "w" });
-    return { saved: true, canceled: false };
+      if (result.canceled || !result.filePath) return { saved: false, canceled: true };
+
+      const targetPath = result.filePath.toLowerCase().endsWith(".pdf")
+        ? result.filePath
+        : `${result.filePath}.pdf`;
+      await fs.writeFile(targetPath, pdfBuffer, { flag: "w" });
+      return { saved: true, canceled: false, fallback: false };
+    } catch (error) {
+      console.error("assemblyflow:save-pdf", error);
+      const fallbackPath = await availableDownloadPath(fileName);
+      await fs.writeFile(fallbackPath, pdfBuffer, { flag: "wx" });
+      return {
+        saved: true,
+        canceled: false,
+        fallback: true,
+        location: "Downloads",
+        fileName: path.basename(fallbackPath),
+      };
+    }
   });
 };
 

@@ -2,6 +2,8 @@ import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { sanitizePdfName, toPdfBuffer } from "../electron/pdf-utils.js";
+
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDirectory, "..");
 const distDirectory = path.join(projectRoot, "dist");
@@ -38,6 +40,17 @@ if (!mainSource.includes("nodeIntegration: false")) fail("nodeIntegration não e
 if (!mainSource.includes("sandbox: true")) fail("sandbox não está habilitado");
 if (!mainSource.includes("requestSingleInstanceLock")) fail("single instance lock ausente");
 if (!preloadSource.includes("assemblyflow:save-pdf")) fail("bridge específica de PDF ausente");
+if (!preloadSource.includes("base64")) fail("bridge de PDF não usa transporte base64 estável");
+
+const pdfSmoke = toPdfBuffer({
+  base64: Buffer.from("%PDF-1.7\nAssemblyFlow", "ascii").toString("base64"),
+});
+if (pdfSmoke.subarray(0, 5).toString("ascii") !== "%PDF-") {
+  fail("validação do payload PDF base64 falhou");
+}
+if (sanitizePdfName("Disc-br: João.pdf") !== "Disc-br-_João.pdf") {
+  fail("sanitização do nome PDF para Windows falhou");
+}
 
 try {
   await access(path.join(projectRoot, "electron", "package.json"));

@@ -33,9 +33,9 @@ export default function AssemblyLetter({ documentId }) {
     [documentId, project]
   );
 
-  const document = project.documents[documentId];
+  const assemblyDocument = project.documents[documentId];
   const supportsAssemblyVariant = documentId === "cg";
-  const activeVariant = document.meta?.eventVariant === "co" ? "co" : "br";
+  const activeVariant = assemblyDocument.meta?.eventVariant === "co" ? "co" : "br";
 
   const selectAssemblyVariant = (eventVariant) => {
     setProject((current) => ({
@@ -91,9 +91,9 @@ export default function AssemblyLetter({ documentId }) {
 
   return (
     <ContainerAuthenticated keep>
-      <ScreenTitle>{document.meta.title}</ScreenTitle>
+      <ScreenTitle>{assemblyDocument.meta.title}</ScreenTitle>
       <LetterModelCard>
-        <ScreenText>{document.meta.description || "Template editável baseado no Excel."}</ScreenText>
+        <ScreenText>{assemblyDocument.meta.description || "Template editável baseado no Excel."}</ScreenText>
         {supportsAssemblyVariant ? (
           <LetterModelTabs aria-label="Modelo da Carta Geral">
             <SectionTab
@@ -118,7 +118,7 @@ export default function AssemblyLetter({ documentId }) {
 
       <TwoColumns>
         <ScreenCard>
-          <LetterEditor value={document.templateHtml} onChange={handleChange} />
+          <LetterEditor value={assemblyDocument.templateHtml} onChange={handleChange} />
         </ScreenCard>
         <PreviewCard>
           <PreviewContent

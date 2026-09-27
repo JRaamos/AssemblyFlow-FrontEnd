@@ -10,12 +10,12 @@ const parseCompositionText = (value = "") =>
 
 const serializeComposition = (value = []) => value.join("\n");
 
-const buildEventItems = (prefix) => [
+export const buildEventItems = (prefix) => [
   { ref: `${prefix}.date`, label: "Data do evento", placeholder: "", quarter: true },
   { ref: `${prefix}.theme`, label: "Tema do evento", placeholder: "", full: true },
-  { ref: `${prefix}.venue`, label: "Local do evento", placeholder: "", quarter: true },
+  { ref: `${prefix}.venue`, label: "Local do evento", placeholder: "", full: true },
   { ref: `${prefix}.venueAddress`, label: "Endereço do evento", placeholder: "", full: true, space: true },
-  { ref: `${prefix}.rehearsalVenue`, label: "Local do ensaio", placeholder: "", quarter: true },
+  { ref: `${prefix}.rehearsalVenue`, label: "Local do ensaio", placeholder: "", full: true },
   { ref: `${prefix}.rehearsalAddress`, label: "Endereço do ensaio", placeholder: "", full: true },
   { ref: `${prefix}.rehearsalDateTime`, label: "Dia e hora do ensaio", placeholder: "", quarter: true },
 ];

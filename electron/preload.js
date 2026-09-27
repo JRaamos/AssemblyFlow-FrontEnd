@@ -4,7 +4,7 @@ contextBridge.exposeInMainWorld(
   "assemblyflowDesktop",
   Object.freeze({
     isDesktop: true,
-    savePdf: ({ bytes, fileName }) =>
-      ipcRenderer.invoke("assemblyflow:save-pdf", { bytes, fileName }),
+    savePdf: ({ base64, fileName }) =>
+      ipcRenderer.invoke("assemblyflow:save-pdf", { base64, fileName }),
   })
 );

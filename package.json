@@ -80,11 +80,13 @@
         "babel-loader": "^10.0.0",
         "concurrently": "^10.0.5",
         "cross-env": "^10.1.0",
+        "css-loader": "6.11.0",
         "cypress": "^14.5.1",
         "cypress-rspack-dev-server": "^1.1.0",
         "electron": "^37.7.1",
         "electron-builder": "26.15.3",
         "path": "^0.12.7",
+        "style-loader": "3.3.4",
         "wait-on": "^9.1.0",
         "webpack": "^5.99.9",
         "webpack-cli": "^6.0.1"

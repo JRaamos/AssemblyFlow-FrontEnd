@@ -210,8 +210,13 @@ export const savePdf = async (pdf, fileName) => {
   const desktopBridge = globalThis.window?.assemblyflowDesktop;
 
   if (desktopBridge?.isDesktop && typeof desktopBridge.savePdf === "function") {
+    const dataUri = pdf.output("datauristring");
+    const separatorIndex = dataUri.indexOf(",");
+    const base64 = separatorIndex >= 0 ? dataUri.slice(separatorIndex + 1) : "";
+    if (!base64) throw new Error("PDF_SERIALIZATION_FAILED");
+
     const result = await desktopBridge.savePdf({
-      bytes: new Uint8Array(pdf.output("arraybuffer")),
+      base64,
       fileName: safeFileName,
     });
     return Boolean(result?.saved);

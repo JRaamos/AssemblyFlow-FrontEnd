@@ -1,3 +1,7 @@
+import React from "react";
+import { mount } from "@cypress/react";
+import { MemoryRouter } from "react-router-dom";
+
 import { buildDocumentPreview } from "services/assembly/templates";
 import {
   getAssignmentView,
@@ -27,6 +31,41 @@ import { createPdfFromPreviewCanvas } from "utils/previewPdf";
 import { sanitizeDocumentHtml } from "services/assembly/sanitize";
 import { createAssemblyProgramPdf } from "utils/programPdf";
 import { createPioneerProgramPdf } from "utils/pioneerProgramPdf";
+import { buildEventItems } from "screens/Home/controller";
+import AssemblyLetter from "screens/AssemblyLetter";
+
+const exportLetterThroughDesktopBridge = (documentId) => {
+  const calls = [];
+
+  cy.window().then((browserWindow) => {
+    browserWindow.localStorage.clear();
+    Object.defineProperty(browserWindow, "assemblyflowDesktop", {
+      configurable: true,
+      value: {
+        isDesktop: true,
+        savePdf: async (payload) => {
+          calls.push(payload);
+          return { saved: true, canceled: false };
+        },
+      },
+    });
+  });
+
+  mount(
+    <MemoryRouter>
+      <AssemblyLetter documentId={documentId} />
+    </MemoryRouter>
+  );
+
+  cy.contains("button", "Baixar PDF").click();
+  cy.contains("PDF gerado.", { timeout: 30000 }).should("be.visible");
+  cy.then(() => {
+    expect(calls).to.have.length(1);
+    expect(calls[0].fileName).to.match(new RegExp(`^${documentId}_.+\\.pdf$`));
+    expect(atob(calls[0].base64).slice(0, 5)).to.equal("%PDF-");
+    delete window.assemblyflowDesktop;
+  });
+};
 
 const createMemoryStorage = () => {
   const values = new Map();
@@ -544,11 +583,30 @@ it("sends a validated PDF to the restricted desktop save bridge", async () => {
     expect(saved).to.equal(true);
     expect(calls).to.have.length(1);
     expect(calls[0].fileName).to.equal("Disc-br-_João.pdf");
-    expect(calls[0].bytes).to.be.instanceOf(Uint8Array);
-    expect(String.fromCharCode(...calls[0].bytes.slice(0, 5))).to.equal("%PDF-");
+    expect(calls[0].base64).to.be.a("string").and.not.to.equal("");
+    expect(atob(calls[0].base64).slice(0, 5)).to.equal("%PDF-");
   } finally {
     delete window.assemblyflowDesktop;
   }
+});
+
+it("exports the general letter through the real screen flow", () => {
+  exportLetterThroughDesktopBridge("cg");
+});
+
+it("exports the donations letter through the real screen flow", () => {
+  exportLetterThroughDesktopBridge("dm");
+});
+
+it("gives event and rehearsal locations enough width for complete venue names", () => {
+  const items = buildEventItems("partA");
+  const eventVenue = items.find(({ ref }) => ref === "partA.venue");
+  const rehearsalVenue = items.find(({ ref }) => ref === "partA.rehearsalVenue");
+
+  expect(eventVenue).to.include({ full: true });
+  expect(eventVenue.quarter).not.to.equal(true);
+  expect(rehearsalVenue).to.include({ full: true });
+  expect(rehearsalVenue.quarter).not.to.equal(true);
 });
 
 it("creates the Ass-br single-circuit program as a selectable landscape A4 PDF", () => {
