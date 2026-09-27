@@ -15,10 +15,12 @@ import {
   ScreenCard,
   ScreenText,
   ScreenTitle,
+  SectionTab,
   StatusText,
   StickyActions,
   TwoColumns,
 } from "screens/AssemblyShared/styled";
+import { LetterModelCard, LetterModelTabs } from "./styled";
 
 export default function AssemblyLetter({ documentId }) {
   const { project, setProject, resetSection } = useAssemblyProject();
@@ -31,6 +33,25 @@ export default function AssemblyLetter({ documentId }) {
   );
 
   const document = project.documents[documentId];
+  const supportsAssemblyVariant = documentId === "cg";
+  const activeVariant = document.meta?.eventVariant === "co" ? "co" : "br";
+
+  const selectAssemblyVariant = (eventVariant) => {
+    setProject((current) => ({
+      ...current,
+      documents: {
+        ...current.documents,
+        [documentId]: {
+          ...current.documents[documentId],
+          meta: {
+            ...current.documents[documentId].meta,
+            eventVariant,
+          },
+        },
+      },
+    }));
+    setExportStatus("");
+  };
 
   const handleChange = (templateHtml) => {
     setProject((current) => ({
@@ -49,7 +70,7 @@ export default function AssemblyLetter({ documentId }) {
     setExportStatus("Gerando PDF...");
     const fileName = buildDocumentFileName({
       documentId,
-      date: project.events[registry.variant]?.partA?.date,
+      date: project.events[supportsAssemblyVariant ? activeVariant : registry.variant]?.partA?.date,
     });
     const success = await downloadAsPDF(`print-${documentId}`, fileName);
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
@@ -64,9 +85,29 @@ export default function AssemblyLetter({ documentId }) {
   return (
     <ContainerAuthenticated keep>
       <ScreenTitle>{document.meta.title}</ScreenTitle>
-      <ScreenCard>
+      <LetterModelCard>
         <ScreenText>{document.meta.description || "Template editável baseado no Excel."}</ScreenText>
-      </ScreenCard>
+        {supportsAssemblyVariant ? (
+          <LetterModelTabs aria-label="Modelo da Carta Geral">
+            <SectionTab
+              type="button"
+              active={activeVariant === "co"}
+              aria-pressed={activeVariant === "co"}
+              onClick={() => selectAssemblyVariant("co")}
+            >
+              Ass Co
+            </SectionTab>
+            <SectionTab
+              type="button"
+              active={activeVariant === "br"}
+              aria-pressed={activeVariant === "br"}
+              onClick={() => selectAssemblyVariant("br")}
+            >
+              Ass Br
+            </SectionTab>
+          </LetterModelTabs>
+        ) : null}
+      </LetterModelCard>
 
       <TwoColumns>
         <ScreenCard>

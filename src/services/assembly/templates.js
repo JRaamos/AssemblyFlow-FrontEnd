@@ -28,10 +28,14 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
   }
 
   if (registry.kind === "letter") {
+    const eventVariant = document.meta?.eventVariant === "co" ? "co" : "br";
+    const letterEvent = projectState.events?.[eventVariant]?.partA || {};
+
     return {
       html: hydrateTemplate(document.templateHtml, {
         ...projectState,
         event: projectState.events,
+        letterEvent,
         documentMeta: document.meta || {},
       }),
       blocks: [],

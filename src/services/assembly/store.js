@@ -80,7 +80,7 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 8,
+  schemaVersion: 9,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -140,11 +140,12 @@ export const loadAssemblyProject = (storage) => {
     });
   }
 
-  if ((metadataSource.schemaVersion || 0) < 8) {
+  if ((metadataSource.schemaVersion || 0) < 9) {
     project.documents.cg.templateHtml = defaults.documents.cg.templateHtml;
+    project.documents.cg.meta.eventVariant = "br";
   }
 
-  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 8) {
+  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 9) {
     saveAssemblyProject(project, storage);
   }
 

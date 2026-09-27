@@ -44,6 +44,23 @@ it("hydrates the default general letter with project data", () => {
   expect(preview.html).not.to.contain("{{event.");
 });
 
+it("switches the general letter between Ass Co and Ass Br using the same model", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const template = project.documents.cg.templateHtml;
+
+  expect(project.documents.cg.meta.eventVariant).to.equal("br");
+  expect(buildDocumentPreview("cg", project).html).to.contain(
+    project.events.br.partA.theme
+  );
+
+  project.documents.cg.meta.eventVariant = "co";
+  const coPreview = buildDocumentPreview("cg", project);
+  expect(coPreview.html).to.contain(project.events.co.partA.theme);
+  expect(coPreview.html).to.contain(project.events.co.partA.date);
+  expect(coPreview.html).to.contain(project.events.co.partA.venue);
+  expect(project.documents.cg.templateHtml).to.equal(template);
+});
+
 it("uses the requested default theme for each assembly everywhere", () => {
   const project = cloneAssemblyProject(defaultAssemblyProject);
   const expected = {

@@ -189,15 +189,15 @@ const tTBr = [
 
 export const OFFICIAL_DOCUMENT_OVERRIDES = {
   cg: {
-    meta: { letterDate: "19 de setembro de 2026" },
+    meta: { letterDate: "19 de setembro de 2026", eventVariant: "br" },
     templateHtml: `
       <header class="document-letterhead"><p><em>{{traveler.name}} - Tel. {{traveler.phone}} - {{traveler.email}}</em></p><p class="document-date">{{documentMeta.letterDate}}</p></header>
       <p><strong>A todas as congregações:</strong></p>
       <p>Prezados irmãos:</p>
       <p>É com prazer que lhes falamos sobre a nossa próxima assembleia, conforme detalhes abaixo:</p>
-      <p><strong>TEMA:</strong> {{event.br.partA.theme}}</p>
-      <p><strong>LOCAL:</strong> {{event.br.partA.venue}}</p>
-      <p><strong>DATA:</strong> {{event.br.partA.date}}</p>
+      <p><strong>TEMA:</strong> {{letterEvent.theme}}</p>
+      <p><strong>LOCAL:</strong> {{letterEvent.venue}}</p>
+      <p><strong>DATA:</strong> {{letterEvent.date}}</p>
       <p><strong>PROGRAMA ESPIRITUAL:</strong> Iniciará às 9h40 e finalizará por volta das 16h.</p>
       <p>Nosso congresso regional nos ajudou a entender a importância de Declarar as boas novas. Agora, nesta assembleia, consideraremos outras maneiras de declarar as boas novas - pela nossa conduta. “Comportem-se de uma Maneira Digna das Boas Novas” Filipenses 1:27. Muitas pessoas fingem respeitar padrões do que é certo e errado, mas tentam mudá-los sempre que lhes é conveniente. Como podemos nos comportar de um modo aprovado por Deus? (Rom. 12:2) E como podemos ajudar outros a fazer a mudança necessária para agradar a Jeová? Esses pontos serão considerados nas diversas partes do programa, incluindo as séries de discursos: “Como as boas novas influenciaram a vida...” e “Nós nos recomendamos como ministro de Deus pela...”. O programa com a descrição de todas as partes está disponível em nosso site jw.org e estará disponível na forma impressa no local da assembleia. Além disso, incentivamos que façam anotações significativas e que prestem “mais do que a costumeira atenção”. (He. 2:1) Circular pelos arredores e conversar durante o programa mostra desconsideração para com Jeová e para com a assistência. Os pais devem manter seus filhos sentados junto de si. - Prov. 29:15.</p>
       <p><strong>REUNIÃO COM TODOS OS PIONEIROS REGULARES, ESPECIAIS E MISSIONÁRIOS:</strong></p>
