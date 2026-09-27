@@ -31,6 +31,7 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
       html: hydrateTemplate(document.templateHtml, {
         ...projectState,
         event: projectState.events,
+        documentMeta: document.meta || {},
       }),
       blocks: [],
       meta: clone(document.meta || {}),
@@ -46,6 +47,7 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
       html: hydrateTemplate(document.templateHtml, {
         ...projectState,
         event: projectState.events,
+        documentMeta: document.meta || {},
         record,
       }),
       blocks: [],

@@ -13,6 +13,7 @@ import {
   createPdfFromElement,
   sanitizeWindowsFileName,
 } from "utils/downloads";
+import { createAssemblyProgramPdf } from "utils/programPdf";
 
 const createMemoryStorage = () => {
   const values = new Map();
@@ -84,8 +85,33 @@ it("keeps T-T and T-T-br as different official documents", () => {
 it("uses an exact versioned storage key for every document", () => {
   const keys = DOCUMENT_REGISTRY.map(({ id }) => getDocumentStorageKey(id));
   expect(new Set(keys).size).to.equal(DOCUMENT_REGISTRY.length);
-  expect(getDocumentStorageKey("t-t")).to.equal("assemblyflow:document:t-t:v2");
-  expect(getDocumentStorageKey("t-t-br")).to.equal("assemblyflow:document:t-t-br:v2");
+  expect(getDocumentStorageKey("t-t")).to.equal("assemblyflow:document:t-t:v3");
+  expect(getDocumentStorageKey("t-t-br")).to.equal("assemblyflow:document:t-t-br:v3");
+});
+
+it("loads the current Ass-br workbook program and rehearsal details", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const program = recalculateProgram({
+    meta: project.documents["ass-br"].meta.sections.partA,
+    rows: project.documents["ass-br"].records.partA,
+  });
+
+  expect(program.rows[0]).to.include({ time: "09:40", title: "Música gravada" });
+  expect(program.rows[1]).to.include({
+    time: "09:50",
+    speaker: "Gustavo",
+    congregation: "Salgadália",
+  });
+  expect(program.rows.find(({ speaker }) => speaker === "Isaque Cunha Santos")).to.include({
+    time: "11:35",
+    congregation: "Valente",
+  });
+  expect(program.rows.at(-1)).to.include({ time: "15:45", end: "15:55" });
+  expect(project.events.br.partA).to.include({
+    date: "06 de dezembro de 2026",
+    rehearsalDateTime: "09 de novembro 2026, às 19:30",
+    rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
+  });
 });
 
 it("persists, reloads and restores only the selected document", () => {
@@ -147,5 +173,33 @@ it("creates a real A4 PDF with selectable text", () => {
 
   expect(pdf.internal.pageSize.getWidth()).to.be.closeTo(210, 0.1);
   expect(pdf.internal.pageSize.getHeight()).to.be.closeTo(297, 0.1);
+  expect(pdf.getNumberOfPages()).to.equal(1);
+});
+
+it("creates the Ass-br program as a selectable landscape A4 PDF", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const program = recalculateProgram({
+    meta: project.documents["ass-br"].meta.sections.partA,
+    rows: project.documents["ass-br"].records.partA,
+  });
+  const event = project.events.br.partA;
+  const pdf = createAssemblyProgramPdf({
+    program,
+    partLabel: "PARTE A",
+    variantLabel: "CA-BR",
+    footerVariantLabel: "CA-br",
+    rehearsalDateTime: event.rehearsalDateTime,
+    rehearsalVenue: event.rehearsalVenue,
+  });
+  const base64 = pdf.output("datauristring").split(",")[1];
+
+  cy.writeFile(
+    "output/pdf/assemblyflow-programa-ass-br-parte-a.pdf",
+    base64,
+    "base64"
+  );
+
+  expect(pdf.internal.pageSize.getWidth()).to.be.closeTo(297, 0.1);
+  expect(pdf.internal.pageSize.getHeight()).to.be.closeTo(210, 0.1);
   expect(pdf.getNumberOfPages()).to.equal(1);
 });

@@ -43,9 +43,12 @@ export const recalculateProgram = (programSection) => {
 
   next.rows = (next.rows || []).map((row, index) => {
     const durationMin = parseDuration(row.durationMin);
-    const time = minutesToTime(cursor);
-    const end = minutesToTime(cursor + durationMin);
-    cursor += durationMin;
+    const rowStart = row.scheduledTime
+      ? timeToMinutes(row.scheduledTime)
+      : cursor;
+    const time = row.hideTime ? "" : minutesToTime(rowStart);
+    const end = minutesToTime(rowStart + durationMin);
+    cursor = rowStart + durationMin;
 
     return {
       id: row.id || `row-${index + 1}`,
@@ -58,6 +61,8 @@ export const recalculateProgram = (programSection) => {
       durationMin,
       time,
       end,
+      scheduledTime: row.scheduledTime || "",
+      hideTime: !!row.hideTime,
       session: row.session || "",
     };
   });

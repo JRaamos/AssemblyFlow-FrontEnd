@@ -8,7 +8,7 @@ export const DashboardTitle = styled.div.attrs({
 })`            
     font-size: 24px;
     font-weight: bold;
-    font-family: Kumbh Sans;
+    font-family: Arial, Helvetica, sans-serif;
     color: ${props => props.theme.palette.colors.black};
     margin-bottom: 12px;
     ${props => props.centred ? `
@@ -19,7 +19,7 @@ export const DashboardTitle = styled.div.attrs({
 
 export const DashboardText = styled.div.attrs({
 })`            
-    font-family: Kumbh Sans;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     line-height: 26px;
     color: ${props => props.theme.palette.colors.black};
@@ -59,7 +59,7 @@ export const ProgramWrap = styled.div`
   background: #fff;
   border-radius: 8px;
   box-shadow: rgba(0,0,0,0.04) 0 3px 5px;
-  overflow: hidden;
+  overflow-x: auto;
 `;
 
 export const ProgramHeader = styled.div`
@@ -67,6 +67,10 @@ export const ProgramHeader = styled.div`
   grid-template-columns: 1fr auto;
   gap: 8px 16px;
   padding: 16px 16px 0 16px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const Meta = styled.div`
@@ -74,6 +78,10 @@ export const Meta = styled.div`
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px 16px;
   padding: 0 16px 12px 16px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 `;
 
 export const MetaItem = styled.div`
@@ -86,6 +94,7 @@ export const MetaItem = styled.div`
 
 export const ProgramTable = styled.table`
   width: 100%;
+  min-width: 1120px;
   border-collapse: collapse;
   table-layout: fixed;
   font-size: 14px;

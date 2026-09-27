@@ -7,7 +7,8 @@ import {
 } from "./defaults";
 import { DOCUMENT_REGISTRY } from "./registry";
 
-export const ASSEMBLY_PROJECT_STORAGE_KEY = "assemblyflow:project:v2";
+export const ASSEMBLY_PROJECT_STORAGE_KEY = "assemblyflow:project:v3";
+const PREVIOUS_PROJECT_STORAGE_KEY = "assemblyflow:project:v2";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -77,22 +78,25 @@ const projectMetadata = (project) => ({
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 2,
+  schemaVersion: 3,
 });
 
 export const loadAssemblyProject = (storage) => {
   const defaults = cloneAssemblyProject(defaultAssemblyProject);
   const savedMetadata = parseJson(safeRead(storage, ASSEMBLY_PROJECT_STORAGE_KEY));
+  const previousMetadata = parseJson(safeRead(storage, PREVIOUS_PROJECT_STORAGE_KEY));
   const hasVersionedDocument = DOCUMENT_REGISTRY.some(({ storageKey }) =>
     Boolean(safeRead(storage, storageKey))
   );
   const legacy = hasVersionedDocument ? null : loadLegacyProject();
-  const metadataSource = savedMetadata || legacy || {};
+  const metadataSource = savedMetadata || previousMetadata || legacy || {};
 
   const project = {
     ...defaults,
     traveler: mergeDefaults(defaults.traveler, metadataSource.traveler),
-    events: mergeDefaults(defaults.events, metadataSource.events),
+    events: savedMetadata
+      ? mergeDefaults(defaults.events, metadataSource.events)
+      : clone(defaults.events),
     circuitComposition: mergeDefaults(
       defaults.circuitComposition,
       metadataSource.circuitComposition

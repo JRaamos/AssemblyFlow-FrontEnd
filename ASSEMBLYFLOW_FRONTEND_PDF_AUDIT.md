@@ -6,12 +6,13 @@
 **Branch:** `feat/assemblyflow-content-pdf-polish`  
 **Base auditada:** `bfb5fde3efc64a59d18475f5b46fd20cdc4432cb`  
 **Commit de implementação:** `d7ce32c47f9fd00391a69b06c798f0d32f97a16f` (`Build AssemblyFlow document and PDF workflows`)  
+**Atualização Excel/PDF:** `Use current workbook data and spreadsheet-style PDFs`  
 **Fonte editorial:** `/Users/jonathanfebraio/Downloads/Zapli Assembleia 2026 (1).xlsm`  
 **SHA-256 da fonte:** `e05c0c9f54e9e4f37cab80728fd998b1498919364ebba1ac8f30b50cf8606ebf`
 
 ## Conclusão executiva
 
-O front-end foi reorganizado como aplicação local AssemblyFlow com 17 documentos isolados, identidade visual própria, persistência local versionada, edição rica sanitizada e exportação PDF A4 vetorial. As 15 planilhas oficiais da pasta de trabalho foram cadastradas com suas áreas de impressão; `T-T` e `T-T-br` têm conteúdo, metadados e chaves de armazenamento diferentes. Todas as rotas abriram sem erro e o build e os 13 testes de componente passaram.
+O front-end foi reorganizado como aplicação local AssemblyFlow com 17 documentos isolados, identidade visual própria, persistência local versionada, edição rica sanitizada e exportação PDF A4 vetorial. As 15 planilhas oficiais da pasta de trabalho foram cadastradas com suas áreas de impressão; `T-T` e `T-T-br` têm conteúdo, metadados e chaves de armazenamento diferentes. Todas as rotas abriram sem erro e o build e os 15 testes de componente passaram.
 
 O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferência editorial humana, célula a célula e PDF a PDF, dos 15 documentos longos contra a apresentação visual da pasta de trabalho. Também não existe fonte oficial no `.xlsm` para `T-M` e `T-M-br`, e algumas células da própria planilha têm fórmulas sem valor editorial utilizável. Nenhum conteúdo fictício foi criado para preencher essas lacunas.
 
@@ -51,10 +52,10 @@ O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferênc
 ### Modelo, isolamento e persistência
 
 - Registro central com ID, rota, variante, planilha, área de impressão, papel, orientação, versão e estado da fonte.
-- Chaves independentes no formato `assemblyflow:document:<id>:v2`, incluindo as chaves distintas `assemblyflow:document:t-t:v2` e `assemblyflow:document:t-t-br:v2`.
-- Metadados do projeto em `assemblyflow:project:v2` e migração conservadora de dados legados.
+- Chaves independentes no formato `assemblyflow:document:<id>:v3`, incluindo as chaves distintas `assemblyflow:document:t-t:v3` e `assemblyflow:document:t-t-br:v3`.
+- Metadados do projeto em `assemblyflow:project:v3`; dados pessoais e composição do circuito da versão anterior são preservados, enquanto datas e programas passam a usar os valores correntes da fonte oficial.
 - Restauração limitada ao documento selecionado; não apaga os demais.
-- Horários normalizados para `HH:mm`.
+- Horários normalizados para `HH:mm`, com preservação dos horários fixos da planilha quando eles incluem ajustes que não correspondem à soma simples das durações.
 - Conteúdo oficial crítico de `T-T` e `T-T-br` reconciliado separadamente, incluindo datas, presidentes, anúncios e encerramentos.
 - Campos quebrados da fonte não foram copiados como `0`, `#NAME?` ou `#REF!`; quando necessário foi usado `Data a confirmar` ou campo editável.
 
@@ -65,12 +66,13 @@ O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferênc
 - Layout desktop responsivo e sem largura mínima fixa.
 - Editor rico com barra reduzida, saneamento por lista permitida e limpeza de listeners.
 - Identidade AssemblyFlow aplicada a título, manifesto, favicons e ícones de 16 a 1024 px, incluindo `.ico` preparado para uso futuro no Windows.
-- Fontes do sistema e ativos locais; nenhuma dependência de Google Fonts.
+- Arial com fallback para Helvetica em toda a aplicação e nos documentos; nenhuma dependência de Google Fonts.
 - O identificador técnico legado `Bravul` permanece apenas em `src/services/storage.js` para não invalidar armazenamento antigo. Ele não aparece na interface ou nos artefatos visuais.
 
 ### PDF
 
-- Geração com `jsPDF` em A4 retrato, margens estáveis, quebra de páginas, tabelas vetoriais e rodapé com paginação.
+- Geração com `jsPDF`; cartas e designações usam A4 retrato com margens estáveis, quebra de páginas e rodapé com paginação.
+- Os programas `Ass-co` e `Ass-br` usam A4 paisagem e tabela vetorial própria, reproduzindo a grade operacional da planilha: faixas bege, manhã/tarde, designado, congregação, controles de tempo e quadro de ensaio.
 - Elementos de interface, toolbars e controles são excluídos; valores de inputs viram texto de impressão.
 - Texto permanece selecionável e extraível.
 - Nomes de arquivo são previsíveis e sanitizados para Windows.
@@ -86,10 +88,10 @@ O status permanece **PARTIAL**, e não `PASS`, porque ainda falta uma conferênc
 ## Verificações executadas
 
 - `pnpm build`: **PASS**.
-- `pnpm test`: **PASS — 13/13 testes**, em cinco specs.
+- `pnpm test`: **PASS — 15/15 testes**, em cinco specs.
 - `git diff --check`: **PASS**.
 - `node --check electron/main.js`: **PASS**.
-- Smoke PDF: **PASS** para A4, texto selecionável, tabela vetorial, nome de arquivo e ausência de JavaScript incorporado.
+- PDF `Ass-br` Parte A: **PASS** para A4 paisagem (`841.89 x 595.28 pt`), uma página, texto selecionável, grade vetorial, nomes, horários, quadro de ensaio e ausência de JavaScript incorporado.
 - Rotas: início e os 17 documentos abriram sem erro de aplicação.
 - Resoluções `1280x720`, `1366x768`, `1440x900` e `1920x1080`: sem overflow horizontal e com ação de PDF visível.
 - `T-T` e `T-T-br`: datas, presidentes, horários, conteúdo, IDs e armazenamento comprovadamente distintos.

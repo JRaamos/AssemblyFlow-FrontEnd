@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const systemFont = `Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
+const systemFont = `Arial, Helvetica, sans-serif`;
 
 export const ScreenTitle = styled.h1`
   margin: 0 0 8px;

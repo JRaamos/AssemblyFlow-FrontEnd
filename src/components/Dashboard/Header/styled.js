@@ -169,7 +169,7 @@ export const UserContent = styled.div.attrs({
 
 export const UserName = styled.div.attrs({
 })`
-    font-family: Raleway;
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: 600;
     font-size: 14px;
     text-transform: uppercase;
@@ -179,7 +179,7 @@ export const UserName = styled.div.attrs({
 
 export const UserInitial = styled.div.attrs({
 })`
-    font-family: Raleway;
+    font-family: Arial, Helvetica, sans-serif;
     width: 24px;
     height: 24px;
     border-radius: 4px;
@@ -232,7 +232,7 @@ export const PlanButton = styled.div.attrs({
 
 export const PlanButtonText = styled.div.attrs({
 })`
-    font-family: Montserrat;
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: 600;
     font-size: 16px;
     color: ${p => p.theme.palette.colors.white};
@@ -240,7 +240,7 @@ export const PlanButtonText = styled.div.attrs({
 
 export const PlanInfoText = styled.div.attrs({
 })`
-    font-family: Montserrat;
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: 500;
     font-size: 12px;
     color: ${p => p.theme.palette.colors.black};

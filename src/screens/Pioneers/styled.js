@@ -8,7 +8,7 @@ export const DashboardTitle = styled.div.attrs({
 })`            
     font-size: 24px;
     font-weight: bold;
-    font-family: Kumbh Sans;
+    font-family: Arial, Helvetica, sans-serif;
     color: ${props => props.theme.palette.colors.black};
     margin-bottom: 12px;
     ${props => props.centred ? `
@@ -19,7 +19,7 @@ export const DashboardTitle = styled.div.attrs({
 
 export const DashboardText = styled.div.attrs({
 })`            
-    font-family: Kumbh Sans;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     line-height: 26px;
     color: ${props => props.theme.palette.colors.black};

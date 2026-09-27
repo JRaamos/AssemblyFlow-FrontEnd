@@ -21,8 +21,8 @@ const officialDocument = ({
   printArea,
   paper: "A4",
   orientation: "portrait",
-  defaultsVersion: 2,
-  storageKey: `assemblyflow:document:${id}:v2`,
+  defaultsVersion: 3,
+  storageKey: `assemblyflow:document:${id}:v3`,
   printFileName: id,
   sourceStatus: "official",
 });
@@ -40,8 +40,8 @@ const legacyDocument = ({ id, menuLabel, title, variant }) => ({
   printArea: null,
   paper: "A4",
   orientation: "portrait",
-  defaultsVersion: 2,
-  storageKey: `assemblyflow:document:${id}:v2`,
+  defaultsVersion: 3,
+  storageKey: `assemblyflow:document:${id}:v3`,
   printFileName: id,
   sourceStatus: "legacy-unverified",
 });

@@ -31,7 +31,7 @@ const defaultEvent = (overrides = {}) => ({
   venueAddress: "",
   rehearsalVenue: "Congregação Norte/Central de Coité",
   rehearsalAddress: "",
-  rehearsalDateTime: "22 de setembro de 2025",
+  rehearsalDateTime: "",
   ...overrides,
 });
 
@@ -41,21 +41,25 @@ export const defaultAssemblyProject = {
     co: {
       partA: defaultEvent({
         date: "28 de fevereiro de 2027",
-        rehearsalVenue: "",
-        rehearsalDateTime: "",
+        rehearsalVenue: "Salão do Reino das congregações Norte/Central de Coité",
+        rehearsalDateTime: "09 de janeiro de 2027",
       }),
       partB: defaultEvent({
         date: "28 de fevereiro de 2027",
-        rehearsalVenue: "",
-        rehearsalDateTime: "",
+        rehearsalVenue: "Salão do Reino das congregações Norte/Central de Coité",
+        rehearsalDateTime: "09 de janeiro de 2027",
       }),
     },
     br: {
       partA: defaultEvent({
         date: "06 de dezembro de 2026",
+        rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
+        rehearsalDateTime: "09 de novembro 2026, às 19:30",
       }),
       partB: defaultEvent({
         date: "06 de dezembro de 2026",
+        rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
+        rehearsalDateTime: "09 de novembro 2026, às 19:30",
       }),
     },
     pioneers: {
@@ -608,7 +612,7 @@ Object.entries(OFFICIAL_DOCUMENT_OVERRIDES).forEach(([documentId, override]) => 
 });
 
 Object.values(defaultAssemblyProject.documents).forEach((document) => {
-  document.defaultsVersion = 2;
+  document.defaultsVersion = 3;
 });
 
 export const cloneAssemblyProject = (value = defaultAssemblyProject) =>

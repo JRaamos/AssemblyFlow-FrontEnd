@@ -17,6 +17,21 @@ const programRow = (id, title, durationMin, speaker = "", congregation = "", typ
   notes: "",
 });
 
+const timedProgramRow = (
+  id,
+  time,
+  title,
+  durationMin,
+  speaker = "",
+  congregation = "",
+  type = "part",
+  hideTime = false
+) => ({
+  ...programRow(id, title, durationMin, speaker, congregation, type),
+  scheduledTime: time,
+  hideTime,
+});
+
 const discourseReminders = `
   <section class="document-section keep-together">
     <h2>LEMBRETES</h2>
@@ -43,7 +58,7 @@ const discourseReminders = `
 const discourseTemplate = (eventPath) => `
   <header class="document-letterhead">
     <p><em>{{traveler.name}} - {{traveler.phone}} - {{traveler.email}}</em></p>
-    <p class="document-date">{{event.${eventPath}.date}}</p>
+    <p class="document-date">{{documentMeta.letterDate}}</p>
   </header>
   <section class="document-recipient keep-together">
     <p><strong>{{record.speaker}}</strong><br />C. <strong><em>{{record.congregation}}</em></strong></p>
@@ -92,7 +107,7 @@ const presidencyInstructions = `
 const prayerTemplate = (eventPath, content) => `
   <header class="document-letterhead">
     <p><strong><em>{{traveler.name}} - {{traveler.phone}} - {{traveler.email}}</em></strong></p>
-    <p class="document-date">{{event.${eventPath}.date}}</p>
+    <p class="document-date">{{documentMeta.letterDate}}</p>
   </header>
   <section class="document-recipient keep-together">
     <p><strong><em>{{record.speaker}}</em></strong><br />C. <strong><em>{{record.congregation}}</em></strong></p>
@@ -139,8 +154,9 @@ const tTBr = [
 
 export const OFFICIAL_DOCUMENT_OVERRIDES = {
   cg: {
+    meta: { letterDate: "19 de setembro de 2026" },
     templateHtml: `
-      <header class="document-letterhead"><p><em>{{traveler.name}} - Tel. {{traveler.phone}} - {{traveler.email}}</em></p><p class="document-date">{{event.co.partA.date}}</p></header>
+      <header class="document-letterhead"><p><em>{{traveler.name}} - Tel. {{traveler.phone}} - {{traveler.email}}</em></p><p class="document-date">{{documentMeta.letterDate}}</p></header>
       <p><strong>A todas as congregações:</strong></p>
       <p>Prezados irmãos:</p>
       <p>É com prazer que lhes falamos sobre a nossa próxima assembleia, conforme detalhes abaixo:</p>
@@ -166,8 +182,9 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
     `,
   },
   dm: {
+    meta: { letterDate: "19 de setembro de 2026" },
     templateHtml: `
-      <header class="document-letterhead"><p><strong><em>{{traveler.name}} / {{traveler.circuitNumber}} / {{traveler.phone}} / {{traveler.email}}</em></strong></p><p class="document-date">{{event.co.partA.date}}</p></header>
+      <header class="document-letterhead"><p><strong><em>{{traveler.name}} / {{traveler.circuitNumber}} / {{traveler.phone}} / {{traveler.email}}</em></strong></p><p class="document-date">{{documentMeta.letterDate}}</p></header>
       <h1>ADMINISTRAÇÃO DA ASSEMBLEIA</h1>
       <p><strong>A TODOS OS CORPOS DE ANCIÃOS</strong></p>
       <p>Prezados irmãos: <span style="float:right">Ref.: Donativos para as despesas da assembleia.</span></p>
@@ -216,6 +233,12 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
     },
   },
   "ass-co": {
+    meta: {
+      sections: {
+        partA: { terminationControl: 0 },
+        partB: { terminationControl: 0 },
+      },
+    },
     records: {
       partA: [
         programRow("ass-co-a-1", "Música gravada", 10),
@@ -267,82 +290,99 @@ export const OFFICIAL_DOCUMENT_OVERRIDES = {
     },
   },
   "ass-br": {
+    meta: {
+      sections: {
+        partA: { terminationControl: 17 },
+        partB: { terminationControl: 17 },
+      },
+    },
     records: {
       partA: [
-        programRow("ass-br-a-1", "Música gravada", 10),
-        programRow("ass-br-a-2", "Presidência da sessão / cântico 1", 7, "Gustavo", "Salgadália"),
-        programRow("ass-br-a-3", "Oração inicial", 3, "Ronivaldo Silva Ramos", "Sup. de Circuito"),
-        programRow("ass-br-a-4", "‘Encontre a mais plena alegria em Jeová’ - Como?", 14, "Brandon Stephenson", "Betel"),
-        programRow("ass-br-a-5", "‘Feliz aquele cujo pecado é perdoado’", 14, "Celso Gandarela", "C. Coité"),
-        programRow("ass-br-a-6", "‘Felizes são os que moram na tua casa!’", 24, "Ronivaldo Silva Ramos", "BA-033"),
-        programRow("ass-br-a-7", "Cântico 73 e anúncios", 10),
-        programRow("ass-br-a-8", "‘Você não negou sua fé em mim’", 29, "Brandon Stephenson", "Betel"),
-        programRow("ass-br-a-9", "Dedic. Batismo: ‘Seu Pai que observa em secreto o recompensará’", 29, "Isaque Cunha Santos", "Valente"),
-        programRow("ass-br-a-10", "Cântico 79", 5),
-        programRow("ass-br-a-11", "INTERVALO", 75, "", "", "interval"),
-        programRow("ass-br-a-12", "Música gravada", 10),
-        programRow("ass-br-a-13", "Presidência da sessão / cântico 126", 5, "Jackson Rodrigues", "Ichu"),
-        programRow("ass-br-a-14", "Experiências", 10, "Caio Diego", "Valente"),
-        programRow("ass-br-a-15", "Resumo de A Sentinela", 29, "Givanildo", "C. Santa Bárbara"),
-        programRow("ass-br-a-16", "Um estilo de vida simples", 14, "Hítalo Silva", "Salgadália"),
-        programRow("ass-br-a-17", "Bons amigos", 14, "Josmar", "Barreiros"),
-        programRow("ass-br-a-18", "Uma família unida", 15, "Lucas Rogério", "Retirolândia"),
-        programRow("ass-br-a-19", "Cântico 88 e anúncios", 10),
-        programRow("ass-br-a-20", "‘Feliz o povo cujo Deus é Jeová’", 35, "Brandon Stephenson", "Betel"),
-        programRow("ass-br-a-21", "Cântico 129 e oração final", 10, "Brandon Stephenson", "Betel"),
+        timedProgramRow("ass-br-a-1", "09:40", "Música gravada", 10),
+        timedProgramRow("ass-br-a-2", "09:50", "Presidência da sessão / cântico 1", 7, "Gustavo", "Salgadália"),
+        timedProgramRow("ass-br-a-3", "09:57", "Oração inicial", 3, "Ronivaldo Silva Ramos", "Sup. de Circuito", "part", true),
+        timedProgramRow("ass-br-a-4", "10:00", "‘Encontre a mais plena alegria em Jeová’ - Como?", 14, "Brandon Stephenson", "Betel"),
+        timedProgramRow("ass-br-a-5", "10:15", "‘Feliz aquele cujo pecado é perdoado’", 14, "Celso Gandarela", "C. Coité"),
+        timedProgramRow("ass-br-a-6", "10:30", "‘Felizes são os que moram na tua casa!’", 24, "Ronivaldo Silva Ramos", "BA-033"),
+        timedProgramRow("ass-br-a-7", "10:55", "Cântico 73 e anúncios", 10),
+        timedProgramRow("ass-br-a-8", "11:05", "‘Você não negou sua fé em mim’", 29, "Brandon Stephenson", "Betel"),
+        timedProgramRow("ass-br-a-9", "11:35", "Dedic. Batismo: ‘Seu Pai que observa em secreto o recompensará’", 29, "Isaque Cunha Santos", "Valente"),
+        timedProgramRow("ass-br-a-10", "12:05", "Cântico 79", 5),
+        timedProgramRow("ass-br-a-11", "12:05", "INTERVALO", 75, "", "", "interval", true),
+        timedProgramRow("ass-br-a-12", "13:20", "Música gravada", 10),
+        timedProgramRow("ass-br-a-13", "13:30", "Presidência da sessão / cântico 126", 5, "Jackson Rodrigues", "Ichu"),
+        timedProgramRow("ass-br-a-14", "13:35", "Experiências", 10, "Caio Diego", "Valente"),
+        timedProgramRow("ass-br-a-15", "13:45", "Resumo de A Sentinela", 29, "Givanildo", "C. Santa Bárbara"),
+        timedProgramRow("ass-br-a-16", "14:15", "Um estilo de vida simples", 14, "Hítalo Silva", "Salgadália"),
+        timedProgramRow("ass-br-a-17", "14:30", "Bons amigos", 14, "Josmar", "Barreiros"),
+        timedProgramRow("ass-br-a-18", "14:45", "Uma família unida", 15, "Lucas Rogério", "Retirolândia"),
+        timedProgramRow("ass-br-a-19", "15:00", "Cântico 88 e anúncios", 10),
+        timedProgramRow("ass-br-a-20", "15:10", "‘Feliz o povo cujo Deus é Jeová’", 35, "Brandon Stephenson", "Betel"),
+        timedProgramRow("ass-br-a-21", "15:45", "Cântico 129 e oração final", 10, "Brandon Stephenson", "Betel"),
       ],
       partB: [
-        programRow("ass-br-b-1", "Música gravada", 10),
-        programRow("ass-br-b-2", "Presidência da sessão / cântico 40", 7),
-        programRow("ass-br-b-3", "Oração inicial", 3),
-        programRow("ass-br-b-4", "Jeová - a fonte de verdadeira paz", 14),
-        programRow("ass-br-b-5", "Proteja sua paz com Jeová", 14),
-        programRow("ass-br-b-6", "Continue a procurar os ‘amigos da paz’", 24, "Ronivaldo Silva Ramos", "BA-033"),
-        programRow("ass-br-b-7", "Cântico 96 e anúncios", 10),
-        programRow("ass-br-b-8", "‘A paz de Deus excede todo o pensamento’ - Como?", 29, "Gilson Silva", "Betel"),
-        programRow("ass-br-b-9", "Dedic. Batismo: Jeová vai ajudar você a herdar o Reino", 29),
-        programRow("ass-br-b-10", "Cântico 27", 5),
-        programRow("ass-br-b-11", "INTERVALO", 75, "", "", "interval"),
-        programRow("ass-br-b-12", "Música gravada", 10),
-        programRow("ass-br-b-13", "Presidência da sessão / cântico 65", 5),
-        programRow("ass-br-b-14", "Experiências", 10),
-        programRow("ass-br-b-15", "Resumo de A Sentinela", 29),
-        programRow("ass-br-b-16", "Empenhe-se pela paz na juventude", 14),
-        programRow("ass-br-b-17", "Empenhar-se pela paz traz alegria", 14),
-        programRow("ass-br-b-18", "Cântico 39 e anúncios", 10),
-        programRow("ass-br-b-19", "Os que se empenham pela paz obtêm a aprovação de Jeová", 35, "Gilson Silva", "Betel"),
-        programRow("ass-br-b-20", "Cântico 77 e oração final", 10, "Gilson Silva", "Betel"),
+        timedProgramRow("ass-br-b-1", "09:40", "Música gravada", 10),
+        timedProgramRow("ass-br-b-2", "09:50", "Presidência da sessão / cântico 40", 7),
+        timedProgramRow("ass-br-b-3", "09:57", "Oração inicial", 3, "", "", "part", true),
+        timedProgramRow("ass-br-b-4", "10:00", "Jeová - a fonte de verdadeira paz", 14),
+        timedProgramRow("ass-br-b-5", "10:15", "Proteja sua paz com Jeová", 14),
+        timedProgramRow("ass-br-b-6", "10:30", "Continue a procurar os ‘amigos da paz’", 24, "Ronivaldo Silva Ramos", "BA-033"),
+        timedProgramRow("ass-br-b-7", "10:55", "Cântico 96 e anúncios", 10),
+        timedProgramRow("ass-br-b-8", "11:05", "‘A paz de Deus excede todo o pensamento’ - Como?", 29, "Gilson Silva", "Betel"),
+        timedProgramRow("ass-br-b-9", "11:35", "Dedic. Batismo: Jeová vai ajudar você a herdar o Reino", 29),
+        timedProgramRow("ass-br-b-10", "12:05", "Cântico 27", 5),
+        timedProgramRow("ass-br-b-11", "12:05", "INTERVALO", 75, "", "", "interval", true),
+        timedProgramRow("ass-br-b-12", "13:20", "Música gravada", 10),
+        timedProgramRow("ass-br-b-13", "13:30", "Presidência da sessão / cântico 65", 5),
+        timedProgramRow("ass-br-b-14", "13:35", "Experiências", 10),
+        timedProgramRow("ass-br-b-15", "13:45", "Resumo de A Sentinela", 29),
+        timedProgramRow("ass-br-b-16", "14:15", "Empenhe-se pela paz na juventude", 14),
+        timedProgramRow("ass-br-b-17", "14:30", "Empenhar-se pela paz traz alegria", 14),
+        timedProgramRow("ass-br-b-18", "15:00", "Cântico 39 e anúncios", 10),
+        timedProgramRow("ass-br-b-19", "15:10", "Os que se empenham pela paz obtêm a aprovação de Jeová", 35, "Gilson Silva", "Betel"),
+        timedProgramRow("ass-br-b-20", "15:45", "Cântico 77 e oração final", 10, "Gilson Silva", "Betel"),
       ],
     },
   },
   "disc-co": {
     templateHtml: discourseTemplate("co.partA"),
+    meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "disc-co-1", speaker: "Oderlan Sodré", congregation: "Norte de Coité", title: "Como tornamos conhecida a verdade?", durationMin: 19, time: "11:14", notes: "Veja esboço, em anexo." }],
   },
   "discb-co": {
     templateHtml: discourseTemplate("co.partB"),
+    meta: { letterDate: "19 de setembro de 2026" },
+    records: [{ id: "discb-co-1", speaker: "", congregation: "", title: "Dedic. Batismo: Continue andando na verdade", durationMin: 29, time: "11:33", notes: "Veja esboço, em anexo." }],
   },
   "disc-br": {
     templateHtml: discourseTemplate("br.partA"),
+    meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "disc-br-1", speaker: "Josmar", congregation: "Barreiros", title: "Bons amigos", durationMin: 14, time: "14:30", notes: "Veja esboço, em anexo." }],
   },
   "discb-br": {
     templateHtml: discourseTemplate("br.partB"),
+    meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "discb-br-1", speaker: "", congregation: "", title: "Proteja sua paz com Jeová", durationMin: 14, time: "10:15", notes: "Veja esboço, em anexo." }],
   },
   "pr-or-co": {
     templateHtml: prayerTemplate("co.partA", prayerOpening),
+    meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "pr-or-co-1", speaker: "Elton Reis", congregation: "Barrocas", title: "Oração", session: "Manhã (início)", time: "09:50", durationMin: 2, notes: "" }],
   },
   "pr-or-b-co": {
     templateHtml: prayerTemplate("co.partB", presidencyInstructions),
+    meta: { letterDate: "19 de setembro de 2026" },
+    records: [{ id: "pr-or-b-co-1", speaker: "", congregation: "", title: "Presidência e oração para a conferência pública", session: "Tarde", time: "13:28", durationMin: 2, notes: "" }],
   },
   "pr-or-br": {
     templateHtml: prayerTemplate("br.partA", presidencyInstructions),
+    meta: { letterDate: "19 de setembro de 2026" },
     records: [{ id: "pr-or-br-1", speaker: "Gustavo", congregation: "Salgadália", title: "Presidência", session: "Manhã", time: "09:50", durationMin: 0, notes: "" }],
   },
   "pr-or-b-br": {
     templateHtml: prayerTemplate("br.partB", prayerOpening),
+    meta: { letterDate: "19 de setembro de 2026" },
+    records: [{ id: "pr-or-b-br-1", speaker: "", congregation: "", title: "Oração", session: "Manhã (início)", time: "09:50", durationMin: 2, notes: "" }],
   },
   "t-t": {
     meta: { title: "Transição Tarde - CA-co", sourceDate: "28 de fevereiro de 2027", president: "Jackson Rodrigues - Cong. Ichu" },

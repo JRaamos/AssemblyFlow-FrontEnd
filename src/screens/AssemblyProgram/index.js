@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import Button from "components/Form/Button";
 import ProgramConstruction from "components/ProgramConstruction";
+import ProgramPrintSheet from "components/ProgramPrintSheet";
 import ContainerAuthenticated from "containers/Authenticated";
 import useAssemblyProject from "hooks/useAssemblyProject";
 import {
@@ -12,12 +13,14 @@ import {
 } from "services/assembly/program";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
+import { downloadAssemblyProgramPdf } from "utils/programPdf";
 import { ButtonContainer, FormSpacer } from "ui/styled";
 
 import {
   ScreenCard,
   ScreenText,
   ScreenTitle,
+  SmallLabel,
   SectionTab,
   SectionTabs,
   StickyActions,
@@ -43,6 +46,16 @@ export default function AssemblyProgram({ documentId }) {
   const bodyPrevCursor = useRef("");
 
   const assemblyDocument = project.documents[documentId];
+  const isAssemblyProgram = documentId === "ass-co" || documentId === "ass-br";
+  const eventScope = registry.variant === "br"
+    ? project.events.br
+    : registry.variant === "co"
+      ? project.events.co
+      : project.events.pioneers;
+  const currentEvent = eventScope?.[activePart] || {};
+  const partLabel = activePart === "partA" ? "PARTE A" : "PARTE B";
+  const variantLabel = registry.variant === "br" ? "CA-BR" : "CA-CO";
+  const footerVariantLabel = registry.variant === "br" ? "CA-br" : "CA-co";
 
   const program = useMemo(() => {
     const section = {
@@ -232,7 +245,19 @@ export default function AssemblyProgram({ documentId }) {
       date: program.meta.date,
       part: registry.supportsParts ? (activePart === "partA" ? "parte-a" : "parte-b") : "",
     });
-    const success = await downloadAsPDF(`print-${documentId}`, fileName);
+    const success = isAssemblyProgram
+      ? await downloadAssemblyProgramPdf(
+          {
+            program,
+            partLabel,
+            variantLabel,
+            footerVariantLabel,
+            rehearsalDateTime: currentEvent.rehearsalDateTime,
+            rehearsalVenue: currentEvent.rehearsalVenue,
+          },
+          fileName
+        )
+      : await downloadAsPDF(`print-${documentId}`, fileName);
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
   };
 
@@ -254,7 +279,7 @@ export default function AssemblyProgram({ documentId }) {
         </SectionTabs>
       ) : null}
 
-      <ScreenCard id={`print-${documentId}`}>
+      <ScreenCard id={isAssemblyProgram ? undefined : `print-${documentId}`}>
         <ProgramHeader>
           <div>
             <ScreenText className="pdf-text-block">
@@ -289,7 +314,7 @@ export default function AssemblyProgram({ documentId }) {
             <label>Início</label>
             <input value={program.meta.start} onChange={(event) => setMeta("start", event.target.value)} />
           </MetaItem>
-          <MetaItem style={{ gridColumn: "span 4" }}>
+          <MetaItem style={{ gridColumn: "1 / -1" }}>
             <label>Tema</label>
             <input value={program.meta.theme} onChange={(event) => setMeta("theme", event.target.value)} />
           </MetaItem>
@@ -306,6 +331,20 @@ export default function AssemblyProgram({ documentId }) {
           removeRow={removeRow}
         />
       </ScreenCard>
+
+      {isAssemblyProgram ? (
+        <ScreenCard>
+          <SmallLabel>Prévia fiel do PDF</SmallLabel>
+          <ProgramPrintSheet
+            program={program}
+            partLabel={partLabel}
+            variantLabel={variantLabel}
+            footerVariantLabel={footerVariantLabel}
+            rehearsalDateTime={currentEvent.rehearsalDateTime}
+            rehearsalVenue={currentEvent.rehearsalVenue}
+          />
+        </ScreenCard>
+      ) : null}
 
       <FormSpacer extraLarge />
       <StickyActions>

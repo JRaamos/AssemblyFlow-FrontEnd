@@ -28,7 +28,7 @@ const EditorContainer = styled.div`
 
   .ql-container {
     border: none !important;
-    font-family: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
     line-height: 1.6;
     color: #111827;

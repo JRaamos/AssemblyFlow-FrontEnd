@@ -86,7 +86,7 @@ export const DashboardMenuBorder = styled.div.attrs({
 
 export const OptionText = styled.div.attrs({
 })` 
-    font-family: Montserrat;
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: 500;
     font-size: 15px;
     color: ${p => p.active ? p.theme.palette.colors.white : p.theme.palette.colors.black};
