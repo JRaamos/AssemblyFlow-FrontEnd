@@ -11,6 +11,7 @@ import {
   reorderRows,
   toggleIntervalRow,
 } from "services/assembly/program";
+import { getCircuitMode } from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
 import { downloadAssemblyProgramPdf } from "utils/programPdf";
@@ -38,9 +39,6 @@ export default function AssemblyProgram({ documentId }) {
   const { project, setProject, resetSection } = useAssemblyProject();
   const registry = DOCUMENT_REGISTRY_BY_ID[documentId];
   const [activePart, setActivePart] = useState("partA");
-  const [circuitMode, setCircuitModeState] = useState(
-    () => project.documents[documentId]?.meta?.circuitMode || "parts"
-  );
   const [activeRow, setActiveRow] = useState(null);
   const [exportStatus, setExportStatus] = useState("");
   const rowRefs = useRef([]);
@@ -50,6 +48,7 @@ export default function AssemblyProgram({ documentId }) {
 
   const assemblyDocument = project.documents[documentId];
   const isAssemblyProgram = documentId === "ass-co" || documentId === "ass-br";
+  const circuitMode = isAssemblyProgram ? getCircuitMode(project) : "single";
   const activeSection = circuitMode === "single" ? "partA" : activePart;
   const eventScope = registry.variant === "br"
     ? project.events.br
@@ -99,30 +98,13 @@ export default function AssemblyProgram({ documentId }) {
     }));
   };
 
-  const setCircuitMode = (mode) => {
-    if (mode === "single") setActivePart("partA");
-    setCircuitModeState(mode);
-    setActiveRow(null);
-    setExportStatus("");
-    setProject((current) => ({
-      ...current,
-      documents: {
-        ...current.documents,
-        [documentId]: {
-          ...current.documents[documentId],
-          meta: {
-            ...current.documents[documentId].meta,
-            circuitMode: mode,
-          },
-        },
-      },
-    }));
-  };
-
   useEffect(() => {
-    setCircuitModeState(project.documents[documentId]?.meta?.circuitMode || "parts");
     setActivePart("partA");
   }, [documentId]);
+
+  useEffect(() => {
+    if (circuitMode === "single") setActivePart("partA");
+  }, [circuitMode]);
 
   const setMeta = (key, value) => {
     persistSection({
@@ -267,8 +249,7 @@ export default function AssemblyProgram({ documentId }) {
 
   const handleReset = () => {
     if (!window.confirm(`Restaurar os textos oficiais de ${registry.menuLabel}? As edições deste documento serão substituídas.`)) return;
-    const restored = resetSection(documentId);
-    setCircuitModeState(restored.documents[documentId]?.meta?.circuitMode || "parts");
+    resetSection(documentId);
     setExportStatus("Textos oficiais restaurados.");
   };
 
@@ -311,30 +292,8 @@ export default function AssemblyProgram({ documentId }) {
         </ScreenText>
       </ScreenCard>
 
-      {isAssemblyProgram && registry.supportsParts ? (
-        <>
-          <SmallLabel>Tipo de circuito</SmallLabel>
-          <SectionTabs>
-            <SectionTab type="button" active={circuitMode === "single"} onClick={() => setCircuitMode("single")}>
-              Único
-            </SectionTab>
-            <SectionTab type="button" active={circuitMode === "parts"} onClick={() => setCircuitMode("parts")}>
-              Partes A e B
-            </SectionTab>
-          </SectionTabs>
-          {circuitMode === "parts" ? (
-            <SectionTabs aria-label="Parte do circuito">
-              <SectionTab type="button" active={activePart === "partA"} onClick={() => setActivePart("partA")}>
-                Parte A
-              </SectionTab>
-              <SectionTab type="button" active={activePart === "partB"} onClick={() => setActivePart("partB")}>
-                Parte B
-              </SectionTab>
-            </SectionTabs>
-          ) : null}
-        </>
-      ) : registry.supportsParts ? (
-        <SectionTabs>
+      {isAssemblyProgram && registry.supportsParts && circuitMode === "parts" ? (
+        <SectionTabs aria-label="Parte do circuito">
           <SectionTab type="button" active={activePart === "partA"} onClick={() => setActivePart("partA")}>
             Parte A
           </SectionTab>

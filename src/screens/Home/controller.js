@@ -22,6 +22,7 @@ const buildEventItems = (prefix) => [
 
 export default function useController() {
   const { project, setProject, resetSection } = useAssemblyProject();
+  const circuitMode = project.settings?.circuitMode === "parts" ? "parts" : "single";
 
   const travelerRegister = useMemo(
     () => project.traveler,
@@ -107,39 +108,61 @@ export default function useController() {
   );
 
   const formItemsCo = useMemo(
-    () => [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
-    []
+    () => circuitMode === "single"
+      ? buildEventItems("partA")
+      : [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
+    [circuitMode]
   );
 
   const formItemsBr = useMemo(
-    () => [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
-    []
+    () => circuitMode === "single"
+      ? buildEventItems("partA")
+      : [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
+    [circuitMode]
   );
 
   const formItemsPio = useMemo(
-    () => [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
-    []
+    () => circuitMode === "single"
+      ? buildEventItems("partA")
+      : [...buildEventItems("partA"), { separator: true }, ...buildEventItems("partB")],
+    [circuitMode]
   );
 
   const formItemsComposition = useMemo(
-    () => [
-      {
+    () => {
+      const partA = {
         ref: "partA",
-        label: "Composição do circuito — Parte A",
+        label: circuitMode === "single"
+          ? "Composição do circuito"
+          : "Composição do circuito — Parte A",
         type: "textarea",
         full: true,
         placeholder: "Uma congregação por linha",
-      },
-      {
+      };
+      const partB = {
         ref: "partB",
         label: "Composição do circuito — Parte B",
         type: "textarea",
         full: true,
         placeholder: "Uma congregação por linha",
-      },
-    ],
-    []
+      };
+      return circuitMode === "single" ? [partA] : [partA, partB];
+    },
+    [circuitMode]
   );
+
+  const toggleCircuitMode = () => {
+    setProject((current) => {
+      const nextMode = current.settings?.circuitMode === "parts" ? "single" : "parts";
+      return {
+        ...current,
+        settings: {
+          ...current.settings,
+          circuitMode: nextMode,
+        },
+      };
+    });
+  };
 
   const updateTraveler = (nextForm) => {
     setProject((current) => ({
@@ -178,8 +201,12 @@ export default function useController() {
     setProject((current) => ({
       ...current,
       circuitComposition: {
-        partA: parseCompositionText(nextForm.partA),
-        partB: parseCompositionText(nextForm.partB),
+        partA: "partA" in nextForm
+          ? parseCompositionText(nextForm.partA)
+          : current.circuitComposition.partA,
+        partB: "partB" in nextForm
+          ? parseCompositionText(nextForm.partB)
+          : current.circuitComposition.partB,
       },
     }));
   };
@@ -190,6 +217,7 @@ export default function useController() {
     formItemsBr,
     formItemsPio,
     formItemsComposition,
+    circuitMode,
     travelerRegister,
     coRegister,
     brRegister,
@@ -198,6 +226,7 @@ export default function useController() {
     updateTraveler,
     updateEvent,
     updateComposition,
+    toggleCircuitMode,
     resetSection,
   };
 }

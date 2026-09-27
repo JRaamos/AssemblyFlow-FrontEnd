@@ -1,4 +1,5 @@
 import { DOCUMENT_REGISTRY_BY_ID } from "./registry";
+import { getAssignmentView } from "./assignments";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -40,18 +41,20 @@ export const buildDocumentPreview = (documentId, projectState, options = {}) => 
   }
 
   if (registry.kind === "assignment") {
-    const records = Array.isArray(document.records) ? document.records : [];
+    const assignment = getAssignmentView(projectState, documentId, options.part);
+    const activeDocument = assignment.document || document;
+    const records = assignment.records;
     const record = records[options.recordIndex || 0] || null;
 
     return {
-      html: hydrateTemplate(document.templateHtml, {
+      html: hydrateTemplate(activeDocument.templateHtml, {
         ...projectState,
         event: projectState.events,
-        documentMeta: document.meta || {},
+        documentMeta: activeDocument.meta || {},
         record,
       }),
       blocks: [],
-      meta: clone(document.meta || {}),
+      meta: clone(activeDocument.meta || {}),
       record,
     };
   }

@@ -1,4 +1,8 @@
 import { buildDocumentPreview } from "services/assembly/templates";
+import {
+  getAssignmentView,
+  updateLinkedAssignment,
+} from "services/assembly/assignments";
 import { cloneAssemblyProject, defaultAssemblyProject } from "services/assembly/defaults";
 import { DASHBOARD_MENU_ITEMS, DOCUMENT_REGISTRY } from "services/assembly/registry";
 import { recalculateProgram, reorderRows, toggleIntervalRow } from "services/assembly/program";
@@ -107,13 +111,93 @@ it("loads the current Ass-br workbook program and rehearsal details", () => {
     congregation: "Valente",
   });
   expect(program.rows.at(-1)).to.include({ time: "15:45", end: "15:55" });
-  expect(project.documents["ass-br"].meta.circuitMode).to.equal("single");
-  expect(project.documents["ass-co"].meta.circuitMode).to.equal("parts");
+  expect(project.settings.circuitMode).to.equal("single");
   expect(project.events.br.partA).to.include({
     date: "06 de dezembro de 2026",
     rehearsalDateTime: "09 de novembro 2026, às 19:30",
     rehearsalVenue: "Salão do Reino das Congregações Norte/Central de Conceição do Coité",
   });
+});
+
+it("links every Disc-br letter to the speakers selected by the workbook program", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const view = getAssignmentView(project, "disc-br", "partA");
+
+  expect(view.programId).to.equal("ass-br");
+  expect(view.records).to.have.length(7);
+  expect(view.records.map(({ speaker }) => speaker)).to.deep.equal([
+    "Brandon Stephenson",
+    "Celso Gandarela",
+    "Isaque Cunha Santos",
+    "Caio Diego",
+    "Givanildo",
+    "Hítalo Silva",
+    "Josmar",
+  ]);
+  expect(view.records.at(-1)).to.include({
+    title: "Bons amigos",
+    congregation: "Barreiros",
+    time: "14:30",
+    durationMin: 14,
+  });
+});
+
+it("applies the workbook linkage to the other discourse and presidency areas", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const discourseCo = getAssignmentView(project, "disc-co", "partA");
+  const presidencyCo = getAssignmentView(project, "pr-or-co", "partA");
+  const presidencyBr = getAssignmentView(project, "pr-or-br", "partA");
+
+  expect(discourseCo.records).to.have.length(10);
+  expect(discourseCo.records.map(({ speaker }) => speaker)).to.include.members([
+    "Adelson Zucateli",
+    "Oderlan Sodré",
+    "Nemias",
+    "Flávio Ferreira",
+  ]);
+  expect(presidencyCo.records.map(({ speaker }) => speaker)).to.deep.equal([
+    "Caio Diego de Jesus",
+    "Jackson Rodrigues",
+  ]);
+  expect(presidencyBr.records.map(({ speaker }) => speaker)).to.deep.equal([
+    "Gustavo",
+    "Ronivaldo Silva Ramos",
+    "Jackson Rodrigues",
+  ]);
+});
+
+it("writes assignment edits back to the linked assembly program", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  const view = getAssignmentView(project, "disc-br", "partA");
+  const record = view.records[0];
+  const updated = updateLinkedAssignment(
+    project,
+    "disc-br",
+    "partA",
+    record,
+    "speaker",
+    "Orador atualizado"
+  );
+  const refreshed = getAssignmentView(updated, "disc-br", "partA");
+
+  expect(
+    updated.documents["ass-br"].records.partA.find(
+      ({ id }) => id === record.sourceProgramRowId
+    ).speaker
+  ).to.equal("Orador atualizado");
+  expect(refreshed.records[0].speaker).to.equal("Orador atualizado");
+});
+
+it("uses the global circuit mode for linked Part B assignments", () => {
+  const project = cloneAssemblyProject(defaultAssemblyProject);
+  expect(getAssignmentView(project, "discb-br", "partB").activePart).to.equal(
+    "partA"
+  );
+
+  project.settings.circuitMode = "parts";
+  const partB = getAssignmentView(project, "discb-br", "partB");
+  expect(partB.activePart).to.equal("partB");
+  expect(partB.records).to.have.length(0);
 });
 
 it("persists, reloads and restores only the selected document", () => {

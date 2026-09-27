@@ -36,6 +36,9 @@ const defaultEvent = (overrides = {}) => ({
 });
 
 export const defaultAssemblyProject = {
+  settings: {
+    circuitMode: "single",
+  },
   traveler,
   events: {
     co: {

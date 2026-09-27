@@ -75,10 +75,11 @@ const loadLegacyProject = () => {
 };
 
 const projectMetadata = (project) => ({
+  settings: clone(project.settings),
   traveler: clone(project.traveler),
   events: clone(project.events),
   circuitComposition: clone(project.circuitComposition),
-  schemaVersion: 3,
+  schemaVersion: 4,
 });
 
 export const loadAssemblyProject = (storage) => {
@@ -93,6 +94,7 @@ export const loadAssemblyProject = (storage) => {
 
   const project = {
     ...defaults,
+    settings: mergeDefaults(defaults.settings, metadataSource.settings),
     traveler: mergeDefaults(defaults.traveler, metadataSource.traveler),
     events: savedMetadata
       ? mergeDefaults(defaults.events, metadataSource.events)
@@ -113,7 +115,11 @@ export const loadAssemblyProject = (storage) => {
     );
   });
 
-  if (!savedMetadata || !hasVersionedDocument) {
+  if ((metadataSource.schemaVersion || 0) < 4) {
+    project.settings.circuitMode = "single";
+  }
+
+  if (!savedMetadata || !hasVersionedDocument || (metadataSource.schemaVersion || 0) < 4) {
     saveAssemblyProject(project, storage);
   }
 

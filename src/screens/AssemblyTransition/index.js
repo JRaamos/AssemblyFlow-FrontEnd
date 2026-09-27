@@ -4,6 +4,7 @@ import Button from "components/Form/Button";
 import LetterEditor from "components/LetterEditor";
 import ContainerAuthenticated from "containers/Authenticated";
 import useAssemblyProject from "hooks/useAssemblyProject";
+import { getCircuitMode } from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentPreview } from "services/assembly/templates";
 import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
@@ -30,10 +31,12 @@ export default function AssemblyTransition({ documentId }) {
   const assemblyDocument = project.documents[documentId];
   const [activePart, setActivePart] = useState("partA");
   const [exportStatus, setExportStatus] = useState("");
+  const circuitMode = getCircuitMode(project);
+  const activeSection = circuitMode === "single" ? "partA" : activePart;
 
   const blocks = useMemo(
-    () => buildDocumentPreview(documentId, project, { part: activePart }).blocks,
-    [activePart, documentId, project]
+    () => buildDocumentPreview(documentId, project, { part: activeSection }).blocks,
+    [activeSection, documentId, project]
   );
 
   const updateBlock = (blockId, content) => {
@@ -45,7 +48,7 @@ export default function AssemblyTransition({ documentId }) {
           ...current.documents[documentId],
           records: {
             ...current.documents[documentId].records,
-            [activePart]: current.documents[documentId].records[activePart].map((item) =>
+            [activeSection]: current.documents[documentId].records[activeSection].map((item) =>
               item.id === blockId ? { ...item, content } : item
             ),
           },
@@ -65,7 +68,13 @@ export default function AssemblyTransition({ documentId }) {
     const fileName = buildDocumentFileName({
       documentId,
       date: assemblyDocument.meta.sourceDate,
-      part: registry.supportsParts ? (activePart === "partA" ? "parte-a" : "parte-b") : "",
+      part: registry.supportsParts
+        ? circuitMode === "single"
+          ? "unico"
+          : activeSection === "partA"
+            ? "parte-a"
+            : "parte-b"
+        : "",
     });
     const success = await downloadAsPDF(`print-${documentId}`, fileName);
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
@@ -75,10 +84,14 @@ export default function AssemblyTransition({ documentId }) {
     <ContainerAuthenticated keep>
       <ScreenTitle>{assemblyDocument.meta.title}</ScreenTitle>
       <ScreenCard>
-        <ScreenText>Transições e falas-base editáveis, separadas por parte e prontas para impressão em PDF.</ScreenText>
+        <ScreenText>
+          {circuitMode === "single"
+            ? "Transições e falas-base do circuito único, prontas para impressão em PDF."
+            : "Transições e falas-base editáveis, separadas por parte e prontas para impressão em PDF."}
+        </ScreenText>
       </ScreenCard>
 
-      {registry.supportsParts ? (
+      {registry.supportsParts && circuitMode === "parts" ? (
         <SectionTabs>
           <SectionTab type="button" active={activePart === "partA"} onClick={() => setActivePart("partA")}>
             Parte A

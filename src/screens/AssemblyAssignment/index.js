@@ -1,9 +1,14 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import Button from "components/Form/Button";
 import LetterEditor from "components/LetterEditor";
 import ContainerAuthenticated from "containers/Authenticated";
 import useAssemblyProject from "hooks/useAssemblyProject";
+import {
+  getAssignmentView,
+  getCircuitMode,
+  updateLinkedAssignment,
+} from "services/assembly/assignments";
 import { DOCUMENT_REGISTRY_BY_ID } from "services/assembly/registry";
 import { buildDocumentPreview } from "services/assembly/templates";
 import { buildDocumentFileName, downloadAsPDF } from "utils/downloads";
@@ -15,6 +20,8 @@ import {
   ScreenCard,
   ScreenText,
   ScreenTitle,
+  SectionTab,
+  SectionTabs,
   SimpleTable,
   SmallLabel,
   StatusText,
@@ -26,64 +33,79 @@ import {
 export default function AssemblyAssignment({ documentId }) {
   const { project, setProject, resetSection } = useAssemblyProject();
   const registry = DOCUMENT_REGISTRY_BY_ID[documentId];
-  const assemblyDocument = project.documents[documentId];
+  const [activePart, setActivePart] = useState(() =>
+    registry.part === "B" ? "partB" : "partA"
+  );
   const [activeRecordIndex, setActiveRecordIndex] = useState(0);
   const [exportStatus, setExportStatus] = useState("");
+  const circuitMode = getCircuitMode(project);
+  const assignmentView = useMemo(
+    () => getAssignmentView(project, documentId, activePart),
+    [activePart, documentId, project]
+  );
+  const assemblyDocument = assignmentView.document;
+  const records = assignmentView.records;
 
   const preview = useMemo(
-    () => buildDocumentPreview(documentId, project, { recordIndex: activeRecordIndex }),
-    [activeRecordIndex, documentId, project]
+    () => buildDocumentPreview(documentId, project, {
+      part: assignmentView.activePart,
+      recordIndex: activeRecordIndex,
+    }),
+    [activeRecordIndex, assignmentView.activePart, documentId, project]
   );
 
   const updateRecord = (index, field, value) => {
-    setProject((current) => {
-      const records = [...current.documents[documentId].records];
-      records[index] = {
-        ...records[index],
-        [field]: field === "durationMin" ? Number(value || 0) : value,
-      };
+    const record = records[index];
+    if (!record) return;
+    setProject((current) =>
+      updateLinkedAssignment(current, documentId, activePart, record, field, value)
+    );
+  };
 
+  const updateTemplate = (templateHtml) => {
+    setProject((current) => {
+      const view = getAssignmentView(current, documentId, activePart);
       return {
         ...current,
         documents: {
           ...current.documents,
-          [documentId]: {
-            ...current.documents[documentId],
-            records,
+          [view.assignmentDocumentId]: {
+            ...current.documents[view.assignmentDocumentId],
+            templateHtml,
           },
         },
       };
     });
   };
 
-  const updateTemplate = (templateHtml) => {
-    setProject((current) => ({
-      ...current,
-      documents: {
-        ...current.documents,
-        [documentId]: {
-          ...current.documents[documentId],
-          templateHtml,
-        },
-      },
-    }));
-  };
+  const currentRecord = records[activeRecordIndex];
 
-  const currentRecord = assemblyDocument.records[activeRecordIndex];
+  useEffect(() => {
+    if (activeRecordIndex >= records.length) {
+      setActiveRecordIndex(Math.max(0, records.length - 1));
+    }
+  }, [activeRecordIndex, records.length]);
+
+  useEffect(() => {
+    if (circuitMode === "single") setActivePart("partA");
+  }, [circuitMode]);
 
   const handleReset = () => {
     if (!window.confirm(`Restaurar os textos oficiais de ${registry.menuLabel}? As edições deste documento serão substituídas.`)) return;
-    resetSection(documentId);
+    resetSection(assignmentView.assignmentDocumentId);
     setExportStatus("Textos oficiais restaurados.");
   };
 
   const handleDownload = async () => {
     setExportStatus("Gerando PDF...");
-    const event = project.events[registry.variant]?.[registry.part === "B" ? "partB" : "partA"];
+    const event = project.events[registry.variant]?.[assignmentView.activePart];
     const fileName = buildDocumentFileName({
-      documentId,
+      documentId: assignmentView.assignmentDocumentId,
       speaker: currentRecord?.speaker,
       date: event?.date,
+      part: circuitMode === "parts"
+        ? assignmentView.activePart === "partA" ? "parte-a" : "parte-b"
+        : "unico",
     });
     const success = await downloadAsPDF(`print-${documentId}`, fileName);
     setExportStatus(success ? "PDF gerado." : "Não foi possível gerar o PDF.");
@@ -93,22 +115,46 @@ export default function AssemblyAssignment({ documentId }) {
     <ContainerAuthenticated keep>
       <ScreenTitle>{assemblyDocument.meta.title}</ScreenTitle>
       <ScreenCard>
-        <ScreenText>Base editável da carta, lista de designações e pré-visualização gerada a partir dos dados atuais do projeto.</ScreenText>
+        <ScreenText>
+          Sincronizado com <strong>{assignmentView.programId}</strong>. Nomes, congregações,
+          temas, tempos e horários vêm diretamente da programação atual do projeto.
+        </ScreenText>
       </ScreenCard>
+
+      {circuitMode === "parts" ? (
+        <SectionTabs aria-label="Parte das designações">
+          <SectionTab
+            type="button"
+            active={assignmentView.activePart === "partA"}
+            onClick={() => {
+              setActivePart("partA");
+              setActiveRecordIndex(0);
+            }}
+          >
+            Parte A
+          </SectionTab>
+          <SectionTab
+            type="button"
+            active={assignmentView.activePart === "partB"}
+            onClick={() => {
+              setActivePart("partB");
+              setActiveRecordIndex(0);
+            }}
+          >
+            Parte B
+          </SectionTab>
+        </SectionTabs>
+      ) : null}
 
       <TwoColumns>
         <div>
-          <ScreenCard>
-            <SmallLabel>Modelo base</SmallLabel>
-            <LetterEditor value={assemblyDocument.templateHtml} onChange={updateTemplate} />
-          </ScreenCard>
           <TableWrap>
             <SmallLabel>Registros</SmallLabel>
-            <SimpleTable>
+            <SimpleTable style={{ minWidth: 920 }}>
               <thead>
                 <tr>
                   <th style={{ width: 48 }}>#</th>
-                  <th>Tema</th>
+                  <th style={{ width: 300 }}>Tema</th>
                   <th style={{ width: 180 }}>Nome</th>
                   <th style={{ width: 180 }}>Congregação</th>
                   <th style={{ width: 100 }}>Tempo</th>
@@ -116,7 +162,7 @@ export default function AssemblyAssignment({ documentId }) {
                 </tr>
               </thead>
               <tbody>
-                {assemblyDocument.records.map((record, index) => (
+                {records.map((record, index) => (
                   <tr
                     key={record.id}
                     className={index === activeRecordIndex ? "active" : ""}
@@ -157,6 +203,13 @@ export default function AssemblyAssignment({ documentId }) {
                     </td>
                   </tr>
                 ))}
+                {!records.length ? (
+                  <tr>
+                    <td colSpan={6}>
+                      Nenhum orador foi preenchido nas partes vinculadas da programação.
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </SimpleTable>
             {currentRecord ? (
@@ -178,6 +231,10 @@ export default function AssemblyAssignment({ documentId }) {
               </SimpleTable>
             ) : null}
           </TableWrap>
+          <ScreenCard>
+            <SmallLabel>Modelo base</SmallLabel>
+            <LetterEditor value={assemblyDocument.templateHtml} onChange={updateTemplate} />
+          </ScreenCard>
         </div>
         <PreviewCard id={`print-${documentId}`}>
           <SmallLabel data-pdf-exclude="true">Pré-visualização A4</SmallLabel>
