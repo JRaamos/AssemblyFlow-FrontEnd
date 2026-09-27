@@ -5,6 +5,10 @@ export const PioneerPrintShell = styled.div`
   padding: 18px;
   border-radius: 8px;
   background: #e7e9ec;
+
+  @media (max-width: 640px) {
+    padding: 8px;
+  }
 `;
 
 export const PioneerPrintPage = styled.div`

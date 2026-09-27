@@ -10,10 +10,20 @@ export const DashboardMenuContainer = styled.div.attrs({
     left: 0;
     z-index: 100;
     background: ${props => props.theme.palette.colors.shadow};
+
+    @media (max-width: 900px) {
+        right: 0;
+        background: rgba(15, 23, 42, 0.48);
+        opacity: ${props => props.$mobileOpen ? 1 : 0};
+        visibility: ${props => props.$mobileOpen ? 'visible' : 'hidden'};
+        pointer-events: ${props => props.$mobileOpen ? 'auto' : 'none'};
+        transition: opacity 180ms ease, visibility 180ms ease;
+    }
 `;
 
-export const DashboardMenu = styled.div.attrs({
-    className: 'menu-contant'
+export const DashboardMenu = styled.nav.attrs({
+    className: 'menu-contant',
+    'data-layout': 'sidebar',
 })`           
     width: ${p => p.less ? '60px' : '224px'};
     padding: ${p => p.less ? '8px' : '16px'};
@@ -23,6 +33,7 @@ export const DashboardMenu = styled.div.attrs({
     display: flex;
     flex-direction: column;
     overflow: auto;
+    transition: width 180ms ease, transform 220ms ease;
     /* Scrollbar styling */
     &::-webkit-scrollbar {
         width: 6px;
@@ -39,6 +50,13 @@ export const DashboardMenu = styled.div.attrs({
 
     &::-webkit-scrollbar-thumb:hover {
         background: ${props => props.theme.palette.primary.main};
+    }
+
+    @media (max-width: 900px) {
+        width: min(82vw, 300px);
+        padding: 16px;
+        box-shadow: 18px 0 50px rgba(15, 23, 42, 0.22);
+        transform: translateX(${props => props.$mobileOpen ? '0' : '-104%'});
     }
 `;
 
@@ -76,6 +94,11 @@ export const DashboardMenuOption = styled.div.attrs({
     ${props => props.active ? `
             background: ${props.theme.palette.lightBlue.main};
                     ` : ``
+    }
+
+    @media (max-width: 900px) {
+        min-height: 44px;
+        padding: 12px 10px;
     }
 `;
 export const DashboardMenuBorder = styled.div.attrs({

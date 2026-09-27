@@ -9,6 +9,11 @@ export const ScreenTitle = styled.h1`
   font-size: 24px;
   font-weight: 750;
   letter-spacing: -0.025em;
+
+  @media (max-width: 640px) {
+    font-size: 20px;
+    line-height: 1.25;
+  }
 `;
 
 export const ScreenText = styled.div`
@@ -19,15 +24,24 @@ export const ScreenText = styled.div`
 `;
 
 export const ScreenCard = styled.section`
+  min-width: 0;
   margin-bottom: 20px;
   padding: 18px 20px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background: #ffffff;
   box-shadow: 0 8px 28px rgba(15, 23, 42, 0.045);
+
+  @media (max-width: 640px) {
+    margin-bottom: 12px;
+    padding: 14px;
+    border-radius: 8px;
+  }
 `;
 
-export const StickyActions = styled.div`
+export const StickyActions = styled.div.attrs({
+  'data-layout': 'sticky-actions',
+})`
   position: sticky;
   z-index: 5;
   bottom: 0;
@@ -37,6 +51,37 @@ export const StickyActions = styled.div`
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(12px);
+
+  > div {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    margin-right: -18px;
+    margin-left: -18px;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  @media (max-width: 640px) {
+    margin: 14px -12px -12px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+
+    > div {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      width: 100%;
+      min-width: 0;
+      min-height: 42px;
+      padding-right: 10px;
+      padding-left: 10px;
+      font-size: 14px;
+    }
+  }
 
   @media print {
     display: none;
@@ -48,6 +93,10 @@ export const PreviewCard = styled(ScreenCard)`
   overflow: auto;
   padding: 16px;
   background: #e9edf2;
+
+  @media (max-width: 640px) {
+    padding: 8px;
+  }
 `;
 
 export const PreviewContent = styled.article`
@@ -187,6 +236,23 @@ export const PreviewContent = styled.article`
     font-size: 9px;
   }
 
+  @media (max-width: 640px) {
+    min-height: 0;
+    padding: 20px 16px;
+    font-size: 12px;
+
+    .document-facts > div,
+    .pioneer-assignment .document-facts > div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .document-signature {
+      width: 62%;
+    }
+  }
+
   th,
   td {
     padding: 4px 5px;
@@ -209,14 +275,24 @@ export const PreviewContent = styled.article`
   }
 `;
 
-export const TwoColumns = styled.div`
+export const TwoColumns = styled.div.attrs({
+  'data-layout': 'two-columns',
+})`
   display: grid;
   grid-template-columns: minmax(360px, 0.9fr) minmax(460px, 1.1fr);
   align-items: start;
   gap: 20px;
 
+  > * {
+    min-width: 0;
+  }
+
   @media (max-width: 1120px) {
     grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 640px) {
+    gap: 12px;
   }
 `;
 
@@ -230,7 +306,10 @@ export const SmallLabel = styled.div`
 `;
 
 export const TableWrap = styled(ScreenCard)`
+  width: 100%;
+  max-width: 100%;
   overflow: auto;
+  overscroll-behavior-inline: contain;
 `;
 
 export const SimpleTable = styled.table`
@@ -288,6 +367,8 @@ export const SectionTabs = styled.div`
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
 `;
 
 export const SectionTab = styled.button`
@@ -321,4 +402,10 @@ export const StatusText = styled.span`
   color: ${(props) => (props.error ? "#b91c1c" : "#047857")};
   font-size: 13px;
   font-weight: 650;
+
+  @media (max-width: 640px) {
+    grid-column: 1 / -1;
+    margin: 0 0 2px;
+    text-align: center;
+  }
 `;

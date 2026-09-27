@@ -40,6 +40,11 @@ export const DashboardContainer = styled.div.attrs({
     background: ${props => props.theme.palette.colors.white};
     border-radius: 8px;
     margin-bottom: 24px;
+
+    @media (max-width: 640px) {
+        padding: 14px 14px 0;
+        margin-bottom: 14px;
+    }
 `;
 
 export const ModeContainer = styled(DashboardContainer)`
@@ -58,6 +63,11 @@ export const ModeButton = styled.button`
     color: #172033;
     text-align: left;
     cursor: pointer;
+
+    @media (max-width: 480px) {
+        align-items: flex-start;
+        padding: 12px;
+    }
 `;
 
 export const ModeButtonIndicator = styled.span`
@@ -104,4 +114,29 @@ export const DashboardContent = styled.div.attrs({
     bottom: 0;
     right: 0;
     left: 225px;
+
+    > div {
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+        left: 0;
+        padding: 10px 18px calc(10px + env(safe-area-inset-bottom));
+    }
+
+    @media (max-width: 640px) {
+        padding-right: 12px;
+        padding-left: 12px;
+
+        > div {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 42px;
+        }
+    }
 `;

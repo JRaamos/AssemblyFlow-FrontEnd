@@ -60,6 +60,13 @@ export const ProgramWrap = styled.div`
   border-radius: 8px;
   box-shadow: rgba(0,0,0,0.04) 0 3px 5px;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+
+  @media (max-width: 640px) {
+    margin-right: -14px;
+    margin-left: -14px;
+    border-radius: 0;
+  }
 `;
 
 export const ProgramHeader = styled.div`
@@ -81,6 +88,15 @@ export const Meta = styled.div`
 
   @media (max-width: 980px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    padding: 0 0 12px;
+
+    > * {
+      grid-column: 1 / -1 !important;
+    }
   }
 `;
 

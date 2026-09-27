@@ -20,7 +20,7 @@ import { getDashboardMenuItems } from "services/assembly/registry";
 
 
 
-export default function DashboardSide({ setLess, less }) {
+export default function DashboardSide({ setLess, less, mobileOpen = false, onMobileClose = () => {} }) {
 
     const location = useLocation();
     const { project } = useAssemblyProject();
@@ -30,6 +30,7 @@ export default function DashboardSide({ setLess, less }) {
 
     const verifyClose = (e) => {
         if (!e.target.closest('.menu-contant')) {
+            onMobileClose();
         }
     };
 
@@ -41,8 +42,8 @@ export default function DashboardSide({ setLess, less }) {
 
     return (
         <>
-            <DashboardMenuContainer onClick={verifyClose} >
-                <DashboardMenu less={less}>
+            <DashboardMenuContainer $mobileOpen={mobileOpen} onClick={verifyClose} >
+                <DashboardMenu less={less} $mobileOpen={mobileOpen}>
                     <DashboardMenuHeader less={less}>
                         {less ? null : <LogoIcon icon="logo" nomargin />}
                     </DashboardMenuHeader>
@@ -51,7 +52,10 @@ export default function DashboardSide({ setLess, less }) {
                             <React.Fragment key={item.path}>
                                 <DashboardMenuOption
                                     active={currentPath === item.path}
-                                    onClick={() => navigate(item.path)}
+                                    onClick={() => {
+                                        navigate(item.path);
+                                        onMobileClose();
+                                    }}
 
                                 >
 

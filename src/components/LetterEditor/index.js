@@ -14,6 +14,7 @@ const EditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-height: 600px;
+  min-width: 0;
 
   .ql-toolbar {
     background: #f9fafb;
@@ -134,6 +135,33 @@ const EditorContainer = styled.div`
   .text-size-normal { font-size: 1em; }
   .text-size-large { font-size: 1.2em; }
   .text-size-huge { font-size: 1.5em; }
+
+  @media (max-width: 640px) {
+    border-radius: 8px;
+
+    .ql-toolbar,
+    .structured-toolbar {
+      position: static;
+      padding: 7px;
+    }
+
+    .ql-container,
+    .structured-editor {
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .structured-toolbar select {
+      min-width: 112px;
+      max-width: 100%;
+    }
+
+    .structured-editor .document-facts > div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+  }
 `
 
 function QuillLetterEditor({
