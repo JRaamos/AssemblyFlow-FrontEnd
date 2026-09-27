@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components' 
 import { RingLoader } from "react-spinners";
 import Lottie from 'react-lottie';

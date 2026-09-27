@@ -36,11 +36,18 @@ const keywordFakerMap = [
     { keyword: 'description', generate: () => faker.lorem.sentence() },
 ];
 
-export default forwardRef(function FormCore({ formItems, register, disabled, title, nospace }, ref) {
+export default forwardRef(function FormCore({ formItems, register, disabled, title, nospace, onFormChange }, ref) {
 
     const [form, setForm] = useState({})
     const formValue = ref => { return form?.[ref] ? form?.[ref] : ''; }
-    const changeForm = (value, ref) => { setForm({ ...form, [ref]: value }); }
+    const changeForm = (value, ref) => {
+        const nextForm = { ...form, [ref]: value };
+        setForm(nextForm);
+
+        if (typeof onFormChange === "function") {
+            onFormChange(nextForm, ref, value);
+        }
+    }
 
     const [nextBlur, setNextBlur] = useState(null)
     const [nextPrint, setNextPrint] = useState([])

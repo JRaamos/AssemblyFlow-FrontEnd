@@ -1,4 +1,6 @@
-## [⽎x] Bravul
+# AssemblyFlow
+
+Front-end local para organizar, editar, visualizar e imprimir documentos de assembleia. O workbook de referência é usado somente durante o desenvolvimento; o aplicativo funciona sem Excel e sem conexão com a internet.
 
 This is an React **Rsbuild project**
 

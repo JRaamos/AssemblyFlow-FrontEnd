@@ -1,9 +1,7 @@
 import React from "react";
 
 import {
-    DashboardAnimation,
     DashboardTitle,
-    DashboardText,
     DashboardContainer,
     DashboardContent
 } from "./styled";
@@ -20,31 +18,47 @@ export default function DashboardHome() {
         formItemsCo,
         formItemsBr,
         formItemsPio,
-        formItemsCircuit
+        formItemsCircuit,
+        formItemsComposition,
+        travelerRegister,
+        coRegister,
+        brRegister,
+        pioRegister,
+        compositionRegister,
+        updateTraveler,
+        updateEvent,
+        updateComposition,
+        resetSection,
     } = useController()
 
     return (
         <>
             <ContainerAuthenticated keep>
                 <DashboardContainer>
-                    <DashboardTitle>Informações do Viajante</DashboardTitle>
-                    <Core formItems={formItemsCircuit} />
+                    <DashboardTitle>Início — Informações do viajante</DashboardTitle>
+                    <Core formItems={formItemsCircuit} register={travelerRegister} onFormChange={updateTraveler} />
                 </DashboardContainer>
                 <DashboardContainer>
-                    <DashboardTitle>Assembleia de circuito (CA-co)</DashboardTitle>
-                    <Core formItems={formItemsCo} />
+                    <DashboardTitle>Assembleia de circuito (CA-co) — Parte A e Parte B</DashboardTitle>
+                    <Core formItems={formItemsCo} register={coRegister} onFormChange={(form) => updateEvent("co", form)} />
                 </DashboardContainer>
                 <DashboardContainer>
-                    <DashboardTitle>Assembleia de circuito (CA-br)</DashboardTitle>
-                    <Core formItems={formItemsBr} />
+                    <DashboardTitle>Assembleia de circuito (CA-br) — Parte A e Parte B</DashboardTitle>
+                    <Core formItems={formItemsBr} register={brRegister} onFormChange={(form) => updateEvent("br", form)} />
                 </DashboardContainer>
                 <DashboardContainer>
-                    <DashboardTitle>Reunião com pioneiros (CA-br)</DashboardTitle>
-                    <Core formItems={formItemsPio} />
+                    <DashboardTitle>Reunião com pioneiros — Parte A e Parte B</DashboardTitle>
+                    <Core formItems={formItemsPio} register={pioRegister} onFormChange={(form) => updateEvent("pioneers", form)} />
+                </DashboardContainer>
+                <DashboardContainer>
+                    <DashboardTitle>Composição do circuito</DashboardTitle>
+                    <Core formItems={formItemsComposition} register={compositionRegister} onFormChange={updateComposition} />
                 </DashboardContainer>
                 <DashboardContent>
-                    <ButtonContainer end>
-                        <Button nospace color="primary">Salvar</Button>
+                    <ButtonContainer end space>
+                        <Button nospace color="secondary" onClick={() => resetSection("events")}>Restaurar eventos</Button>
+                        <Button nospace color="secondary" onClick={() => resetSection("circuitComposition")}>Restaurar composição</Button>
+                        <Button nospace color="primary" onClick={() => resetSection("all")}>Restaurar projeto</Button>
                     </ButtonContainer>
                 </DashboardContent>
                 <FormSpacer extraLarge />

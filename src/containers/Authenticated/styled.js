@@ -11,7 +11,7 @@ export const DashboardBody = styled.div.attrs({
 })`       
     min-height: calc(100vh);
     max-height: calc(100vh);
-    width: ${p => p.less ? `calc(100% - 60px)` : `calc(100% - 224px);`}; 
+    width: ${p => p.less ? `calc(100% - 60px)` : `calc(100% - 224px)`};
     transition: all 0.3s;
     background: ${props => props.theme.palette.background.primary};
     display: flex;
@@ -23,14 +23,15 @@ export const DashboardBody = styled.div.attrs({
 export const DashboardBodyContent = styled.div.attrs({
 })`            
     margin: 24px;
-    width: 100%;
+    width: calc(100% - 48px);
+    min-width: 0;
     border-radius: 11px;
     min-height: calc(100vh - 128px);
 `;
 
 export const Content = styled.div.attrs({
 })`           
-    overflow:hidden;
-    min-width: 1512px;
+    min-width: 0;
+    width: 100%;
 
-`; 
+`;

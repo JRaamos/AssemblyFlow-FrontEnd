@@ -1,12 +1,12 @@
 {
-  "name": "weapon-x",
+  "name": "assemblyflow-desktop",
   "version": "1.0.0",
-  "description": "An application to generate applications",
+  "description": "AssemblyFlow desktop shell",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   }, 
-  "author": "GitHub",
+  "author": "AssemblyFlow",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^16.0.7"

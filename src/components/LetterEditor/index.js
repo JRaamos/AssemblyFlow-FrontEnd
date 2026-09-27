@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from 'react'
 import { useQuill } from 'react-quilljs'
 import 'quill/dist/quill.snow.css'
 import styled from 'styled-components'
+import { sanitizeDocumentHtml } from 'services/assembly/sanitize'
 
 // 🎨 Estilos do container principal
 const EditorContainer = styled.div`
@@ -27,7 +28,7 @@ const EditorContainer = styled.div`
 
   .ql-container {
     border: none !important;
-    font-family: 'Inter', sans-serif;
+    font-family: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size: 15px;
     line-height: 1.6;
     color: #111827;
@@ -64,10 +65,10 @@ export default function LetterEditor({
     () => ({
       toolbar: [
         [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
+        ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }],
         [{ align: [] }],
-        ['link', 'blockquote', 'code-block'],
+        ['link', 'blockquote'],
         ['clean']
       ]
     }),
@@ -79,13 +80,11 @@ export default function LetterEditor({
     'bold',
     'italic',
     'underline',
-    'strike',
     'list',
     'bullet',
     'align',
     'link',
     'blockquote',
-    'code-block',
   ]
 
   const { quill, quillRef } = useQuill({
@@ -98,16 +97,18 @@ export default function LetterEditor({
   // sincroniza valor externo → editor
   useEffect(() => {
     if (quill && value !== quill.root.innerHTML) {
-      quill.root.innerHTML = value || ''
+      quill.root.innerHTML = sanitizeDocumentHtml(value || '')
     }
   }, [value, quill])
 
   // sincroniza editor → valor externo
   useEffect(() => {
     if (quill) {
-      quill.on('text-change', () => {
-        onChange?.(quill.root.innerHTML)
-      })
+      const handleTextChange = () => {
+        onChange?.(sanitizeDocumentHtml(quill.root.innerHTML))
+      }
+      quill.on('text-change', handleTextChange)
+      return () => quill.off('text-change', handleTextChange)
     }
   }, [quill, onChange])
 

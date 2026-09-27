@@ -5,16 +5,25 @@ const path = require('path')
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    title: 'AssemblyFlow',
     width: 1200,
     height: 1024,
+    minWidth: 1100,
+    minHeight: 700,
+    icon: path.join(__dirname, '..', 'public', 'icons', 'icon-256.png'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
     }
   })
 
-
-  // mainWindow.loadFile('index.html')
-  mainWindow.loadURL('http://localhost:3000')
+  if (app.isPackaged) {
+    mainWindow.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
+  } else {
+    mainWindow.loadURL(process.env.ASSEMBLYFLOW_DEV_URL || 'http://localhost:3000')
+  }
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
