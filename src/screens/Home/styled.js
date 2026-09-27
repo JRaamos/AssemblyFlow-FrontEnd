@@ -42,6 +42,10 @@ export const DashboardContainer = styled.div.attrs({
     margin-bottom: 24px;
 `;
 
+export const ModeContainer = styled(DashboardContainer)`
+    padding-bottom: 16px;
+`;
+
 export const ModeButton = styled.button`
     width: 100%;
     display: flex;

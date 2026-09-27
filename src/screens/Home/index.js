@@ -4,6 +4,7 @@ import {
     DashboardTitle,
     DashboardContainer,
     DashboardContent,
+    ModeContainer,
     ModeButton,
     ModeButtonIndicator,
     ModeButtonText,
@@ -42,7 +43,7 @@ export default function DashboardHome() {
     return (
         <>
             <ContainerAuthenticated keep>
-                <DashboardContainer>
+                <ModeContainer>
                     <DashboardTitle>Formato do projeto</DashboardTitle>
                     <ModeButton
                         type="button"
@@ -61,7 +62,7 @@ export default function DashboardHome() {
                             </ModeDescription>
                         </ModeButtonText>
                     </ModeButton>
-                </DashboardContainer>
+                </ModeContainer>
                 <DashboardContainer>
                     <DashboardTitle>Início — Informações do viajante</DashboardTitle>
                     <Core formItems={formItemsCircuit} register={travelerRegister} onFormChange={updateTraveler} />
@@ -84,10 +85,12 @@ export default function DashboardHome() {
                     </DashboardTitle>
                     <Core formItems={formItemsPio} register={pioRegister} onFormChange={(form) => updateEvent("pioneers", form)} />
                 </DashboardContainer>
-                <DashboardContainer>
-                    <DashboardTitle>Composição do circuito</DashboardTitle>
-                    <Core formItems={formItemsComposition} register={compositionRegister} onFormChange={updateComposition} />
-                </DashboardContainer>
+                {!singleCircuit ? (
+                    <DashboardContainer>
+                        <DashboardTitle>Composição do circuito</DashboardTitle>
+                        <Core formItems={formItemsComposition} register={compositionRegister} onFormChange={updateComposition} />
+                    </DashboardContainer>
+                ) : null}
                 <DashboardContent>
                     <ButtonContainer end space>
                         <Button nospace color="secondary" onClick={() => resetSection("events")}>Restaurar eventos</Button>
